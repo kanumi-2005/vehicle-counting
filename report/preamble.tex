@@ -1,0 +1,47 @@
+\usepackage[margin=1in]{geometry}
+\usepackage[unicode]{hyperref}
+\usepackage{graphicx}
+\usepackage{tikz}
+
+\usepackage{polyglossia}
+\setdefaultlanguage{vietnamese}
+\setotherlanguage{english}
+
+% \usepackage{subcaption}
+% \captionsetup{subrefformat=parens}
+\usepackage[skip=4pt]{caption}
+\captionsetup*[table]{position=above}
+
+\usepackage{tabularray}
+\DefTblrTemplate{firsthead}{caption}{%
+  \makebox[\tablewidth]{\parbox{\columnwidth}{%
+    \UseTblrTemplate{caption}{normal}%
+  }}%
+}
+\SetTblrTemplate{firsthead}{caption}
+
+% APA reference format
+\usepackage{apacite}
+
+\addto\captionsvietnamese{%
+  \renewcommand{\refname}{Tài liệu tham khảo}%
+}
+
+\usepackage[inline]{enumitem}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{import}
+% \usepackage{indentfirst}
+
+% Config
+% \AtBeginDocument{\renewcommand{\refname}{Tài liệu tham khảo}}
+% \AtBeginDocument{\renewcommand{\listtablename}{Danh sách bảng}}
+\AtBeginDocument{\renewcommand{\tblrcontfootname}{Còn tiếp trang sau}}
+\AtBeginDocument{\renewcommand{\tblrcontheadname}{(Tiếp theo)}}
+\UseTblrLibrary{varwidth}
+\UseTblrLibrary{diagbox}
+
+\newcommand{\resourcespath}{resources}
+\newcommand{\figurespath}{\resourcespath/figures}
+\newcommand{\imagespath}{\figurespath}
+\graphicspath{{\figurespath}}
+\newcommand{\tablespath}{\resourcespath/tables}
