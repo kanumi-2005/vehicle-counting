@@ -1,0 +1,101 @@
+\section{Tổng quan}
+\subsection{Động lực nghiên cứu}
+
+Sự phát triển nhanh chóng của quá trình đô thị hóa cùng với sự gia tăng liên
+tục của số lượng phương tiện giao thông đã tạo ra nhiều thách thức đối với công
+tác quản lý và điều hành giao thông tại các đô thị hiện đại. Các vấn đề như ùn
+tắc giao thông, tai nạn đường bộ và ô nhiễm môi trường ngày càng trở nên phổ
+biến, đòi hỏi các cơ quan quản lý phải có khả năng giám sát và phân tích tình
+hình giao thông một cách hiệu quả. Trong bối cảnh đó, Hệ thống Giao thông Thông
+minh (Intelligent Transportation Systems -- ITS) đã trở thành một hướng nghiên
+cứu quan trọng nhằm nâng cao mức độ an toàn, hiệu quả và tính bền vững của hệ
+thống giao thông \cite{YANG2018143}.
+
+Trong Hệ thống Giao thông Thông minh (ITS), phát hiện và đếm phương tiện là một
+trong những nhiệm vụ quan trọng, cung cấp dữ liệu phục vụ nhiều ứng dụng như
+giám sát lưu lượng giao thông, điều khiển tín hiệu giao thông, phát hiện ùn
+tắc, dự báo lưu lượng phương tiện và hỗ trợ quy hoạch hạ tầng giao thông
+\cite{YANG2018143}. Trước đây, việc thu thập thông tin giao thông chủ yếu
+dựa trên các cảm biến chuyên dụng như vòng từ cảm ứng, radar hoặc cảm biến
+laser. Mặc dù các thiết bị này có khả năng cung cấp dữ liệu tương đối chính
+xác, chúng thường đòi hỏi chi phí lắp đặt và bảo trì cao, đồng thời dễ bị ảnh
+hưởng bởi các điều kiện môi trường \cite{YANG2018143}.
+
+Sự phát triển và phổ biến của các hệ thống camera giám sát giao thông đã tạo ra
+nguồn dữ liệu hình ảnh và video phong phú, mở ra hướng tiếp cận mới cho việc
+thu thập và phân tích thông tin giao thông trên quy mô lớn. So với các loại cảm
+biến truyền thống, camera có ưu thế về chi phí, tính linh hoạt và khả năng cung
+cấp thông tin trực quan phục vụ nhiều nhiệm vụ phân tích khác nhau
+\cite{YANG2018143}.
+
+Nhờ sự phát triển của học sâu, các hệ thống phát hiện và đếm phương tiện dựa
+trên dữ liệu video đã đạt được độ chính xác cao và có khả năng hoạt động hiệu
+quả trong các bối cảnh giao thông thực tế, đặc biệt trên các tuyến đường cao
+tốc và đô thị \cite{song2019}.
+
+Vì vậy, nghiên cứu các phương pháp phát hiện và đếm phương tiện từ video giám
+sát giao thông không chỉ mang ý nghĩa khoa học trong lĩnh vực thị giác máy tính
+mà còn có giá trị thực tiễn đối với việc xây dựng và phát triển các hệ thống
+giao thông thông minh.
+
+\subsection{Phát biểu bài toán}
+
+Bài toán phát hiện và đếm phương tiện trong giám sát giao thông sử dụng dữ liệu
+đầu vào là video hoặc chuỗi ảnh được thu nhận từ các camera giám sát lắp đặt
+tại các tuyến đường, nút giao thông hoặc đường cao tốc. Mục tiêu của hệ thống
+là xác định vị trí của các phương tiện xuất hiện trong từng khung hình, theo dõi
+sự di chuyển của chúng giữa các khung hình liên tiếp và thực hiện đếm số lượng
+phương tiện đi qua một vùng quan sát xác định trước. Thông tin thu được từ quá
+trình phát hiện và đếm phương tiện là cơ sở cho nhiều ứng dụng trong hệ thống
+giao thông thông minh như giám sát lưu lượng giao thông, phát hiện ùn tắc và hỗ
+trợ quản lý giao thông \cite{YANG2018143}.
+
+Kết quả đầu ra của hệ thống bao gồm vị trí phương tiện dưới dạng hộp giới hạn,
+thông tin theo dõi đối tượng và số lượng phương tiện được ghi nhận trong khoảng
+thời gian quan sát. Hệ thống cần đảm bảo độ chính xác cao trong điều kiện giao
+thông thực tế, đồng thời đáp ứng yêu cầu xử lý gần thời gian thực nhằm phục vụ
+hiệu quả cho các ứng dụng giám sát và điều hành giao thông.
+\subsection{Ý nghĩa khoa học và thực tiễn}
+
+\subsubsection{Ý nghĩa khoa học}
+
+Đề tài góp phần nghiên cứu khả năng ứng dụng các mô hình học sâu trong bài toán
+phát hiện đối tượng và phân tích dữ liệu giao thông từ video. Việc đánh giá
+hiệu quả của các mô hình phát hiện phương tiện trong những điều kiện giao thông
+khác nhau giúp bổ sung cơ sở thực nghiệm cho lĩnh vực thị giác máy tính và giao
+thông thông minh. Ngoài ra, đề tài cũng tạo tiền đề cho các nghiên cứu liên
+quan đến theo dõi đối tượng, phân tích hành vi giao thông và dự báo lưu lượng
+phương tiện trong tương lai.
+
+\subsubsection{Ý nghĩa thực tiễn}
+
+Hệ thống phát hiện và đếm phương tiện có thể được ứng dụng trong công tác giám
+sát giao thông tự động, hỗ trợ điều khiển tín hiệu giao thông thích ứng, đánh
+giá mật độ phương tiện, phát hiện ùn tắc và thu thập dữ liệu phục vụ quy hoạch
+hạ tầng giao thông. Việc tự động hóa quá trình thu thập dữ liệu giao thông giúp
+giảm chi phí vận hành, nâng cao độ chính xác và cung cấp thông tin theo thời
+gian thực cho các cơ quan quản lý giao thông.
+
+\subsection{Thách thức của bài toán}
+
+Mặc dù các phương pháp học sâu đã đạt được nhiều tiến bộ trong những năm gần
+đây, bài toán phát hiện và đếm phương tiện trong môi trường thực tế vẫn còn
+nhiều thách thức. Điều kiện ánh sáng thay đổi giữa ban ngày và ban đêm, các
+hiện tượng thời tiết bất lợi như mưa hoặc sương mù, hiện tượng che khuất giữa
+các phương tiện và sự khác biệt về góc quan sát của camera đều có thể ảnh hưởng
+đến độ chính xác của hệ thống. Bên cạnh đó, sự đa dạng về kích thước và chủng
+loại phương tiện cũng làm tăng độ phức tạp của quá trình phát hiện và theo dõi
+đối tượng \cite{YANG2018143}.
+
+\subsection{Phạm vi nghiên cứu}
+
+Đề tài tập trung nghiên cứu bài toán phát hiện, theo dõi và đếm phương tiện
+giao thông đường bộ dựa trên dữ liệu video từ các camera giám sát cố định. Các
+thí nghiệm được thực hiện trên bộ dữ liệu UA-DETRAC, bao gồm các phương tiện
+như ô tô, xe buýt, xe tải nhẹ và các loại phương tiện khác được ghi nhận trong
+tập dữ liệu.
+
+Về phương pháp, đề tài sử dụng mô hình phát hiện đối tượng dựa trên học sâu để
+xác định vị trí phương tiện trong từng khung hình, kết hợp với thuật toán theo
+dõi đối tượng nhằm duy trì định danh của phương tiện và thực hiện đếm phương
+tiện khi chúng đi qua vùng quan sát xác định trước.
