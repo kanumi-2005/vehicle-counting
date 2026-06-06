@@ -102,7 +102,7 @@ def write_seqinfo(seq_path, name, frames):
         f"[Sequence]\n"
         f"name={name}\n"
         f"imDir=img1\n"
-        f"frameRate=30\n"
+        f"frameRate=25\n"
         f"seqLength={seq_len}\n"
         f"imWidth=960\n"
         f"imHeight=540\n"
