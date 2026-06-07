@@ -1,0 +1,22 @@
+\subsubsection{Tập dữ liệu}
+
+Nghiên cứu này sử dụng tập dữ liệu UA-DETRAC (University at Albany DEtection
+and TRACking) làm cơ sở chuẩn đối sánh. Quy mô của tập dữ liệu bao gồm 100
+chuỗi video được chọn từ hơn 10 giờ từ camera ghi lại các bối cảnh giao thông
+thực tế ở 24 vị trí khác nhau với đa dạng mẫu và điều kiện giao thông bao gồm
+cao tốc đô thị, nút giao thông, ngã ba chữ T~\cite{wen2020uadetrac}. Các video
+này được ghi lại với 25 khung hình/giây (FPS) với định dạng JPEG và độ phân
+giải $960 \times 540$~\cite{wen2020uadetrac}.
+
+Hơn 140,000 khung hình được chú thích (annotated) thủ công với hơn 8,250 phương
+tiện và tổng cộng 1.21 triệu hộp bao được gán nhãn. Mỗi mẫu dữ liệu chứa thông
+tin tọa độ của các hộp bao nhằm định vị chính xác các phương tiện. Bên cạnh đó,
+mỗi đối tượng trong mẫu được mô tả chi tiết thông qua các thuộc tính bao gồm:
+phân lớp phương tiện (ô tô, xe buýt, xe tải nhỏ và các loại khác), bối cảnh
+chiếu sáng (nhiều mây, ban đêm, trời nắng, trời mưa), phạm vi kích thước (nhỏ,
+trung bình, lớn), tỷ lệ che khuất (không che khuất, che khuất một phần, che
+khuất nhiều) và tỷ lệ nằm ngoài khung hình~\cite{wen2020uadetrac}. Nhằm phục vụ
+cho quá trình đánh giá mô hình, tập dữ liệu được phân hoạch thành hai tập con
+độc lập: tập huấn luyện (train) chứa 60 chuỗi video với xấp xỉ 84.000 khung
+hình, và tập kiểm tra (test) bao gồm 40 chuỗi video với 56.000 khung
+hình~\cite{wen2020uadetrac}.
