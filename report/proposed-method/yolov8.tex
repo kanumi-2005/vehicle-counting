@@ -1,0 +1,56 @@
+\subsection{Mô hình YOLOv8}
+
+YOLOv8 được Ultralytics phát hành vào ngày 10 tháng 1 năm 2023, mang đến những
+cải tiến đáng kể về độ chính xác và tốc độ xử lý so với các phiên bản trước
+đó. Kế thừa những ưu điểm của các thế hệ YOLO trước, YOLOv8 được bổ sung nhiều
+đặc điểm và tối ưu hóa mới trong kiến trúc mạng, giúp nâng cao khả năng trích
+xuất đặc trưng và hiệu quả phát hiện đối tượng. Nhờ những cải tiến này, YOLOv8
+trở thành một lựa chọn phù hợp cho nhiều bài toán phát hiện đối tượng trong
+các ứng dụng thị giác máy tính khác nhau.
+
+Về mặt kiến trúc, YOLOv8 được xây dựng dựa trên ba thành phần chính: Backbone,
+Neck và Detection Head. Thành phần Backbone sử dụng kiến trúc CSPDarknet cải
+tiến đảm nhiệm vai trò trích xuất đặc trưng đa tỉ lệ từ ảnh đầu vào thông
+qua các lớp tích chập được tối ưu hóa nhằm học các đặc trưng phân cấp bao gồm
+đặc trưng mức thấp như kết cấu, cạnh và đặc trưng ngữ nghĩa cấp cao. Các đặc
+trưng này sau đó được chuyển đến thành phần Neck để thực hiện hợp nhất thông
+tin đa tỉ lệ. Thành phần Neck sử dụng kiến trúc PANet cải tiến giúp tăng cường
+khả năng trao đổi thông tin giữa các mức đặc trưng khác nhau, từ đó nâng cao
+hiệu quả phát hiện đối tượng có kích thước khác nhau. Thành phần Head chịu
+trách nhiệm sinh ra các dự đoán cuối cùng, bao gồm tọa độ hộp bao, độ tin cậy,
+và nhãn lớp. Một cải tiến đáng chú ý của YOLOv8 là việc áp dụng cơ chế
+anchor-free thay cho cơ chế anchor-based được sử dụng trong các phiên bản
+YOLO trước. Cách tiếp cận này giúp đơn giản quá trình dự đoán, giảm số lượng
+tham số và cải thiện khả năng thích ứng của mô hình đối với đối tượng có kích
+thước khác nhau \cite{yaseen2024yolov8}.
+
+Ngoài những cải tiến về kiến trúc, YOLOv8 còn được tối ưu hóa nhằm đạt sự cân
+bằng giữa độ chính xác và tốc độ xử lý. Ultralytics cung cấp nhiều biến thể
+khác nhau bao gồm YOLOv8n, YOLOv8s, YOLOv8m, YOLOv8l và YOLOv8x, cho phép
+người dùng lựa chọn mô hình phù hợp với yêu cầu về hiệu năng và tài nguyên
+phần cứng.
+
+\subsubsection{Biến thể YOLOv8n}
+
+Trong nghiên cứu này, biến thể YOLOv8n được lựa chọn làm mô hình phát hiện đối
+tượng chính. YOLOv8n là phiên bản có quy mô nhỏ nhất trong họ YOLOv8, được
+thiết kế nhằm giảm yêu cầu về tài nguyên tính toán trong khi vẫn duy trì hiệu
+năng phát hiện đối tượng ở mức cao. Với số lượng tham số ít hơn so với các
+biến thể còn lại, YOLOv8n phù hợp cho các hệ thống nhúng, thiết bị biên và các
+ứng dụng yêu cầu xử lý thời gian thực.
+
+YOLOv8n đạt được kích thước mô hình nhỏ gọn thông qua việc sử dụng các lớp
+tích chập được tối ưu hóa và giảm số lượng tham số trong mạng. Kích thước mô
+hình chỉ khoảng 2 MB ở định dạng INT8 và khoảng 3.8 MB ở định dạng FP32, giúp
+giảm yêu cầu về bộ nhớ lưu trữ và bộ nhớ truy cập trong quá trình suy luận.
+Đặc điểm này khiến YOLOv8n trở thành lựa chọn phù hợp cho các thiết bị nhúng,
+hệ thống IoT và các nền tảng di động có giới hạn về năng lượng và tài nguyên
+phần cứng \cite{yaseen2024yolov8}.
+
+Ngoài ra, YOLOv8n hỗ trợ triển khai trên nhiều nền tảng tăng tốc suy luận như
+ONNX Runtime và TensorRT, cho phép tận dụng hiệu quả tài nguyên phần cứng và
+giảm độ trễ khi xử lý thời gian thực \cite{yaseen2024yolov8}.
+
+Nhờ sự kết hợp giữa kiến trúc gọn nhẹ, tốc độ cao và khả năng triển khai linh
+hoạt, YOLOv8n được lựa chọn làm mô hình nền tảng cho hệ thống phát hiện đối
+tượng được đề xuất trong nghiên cứu này.
