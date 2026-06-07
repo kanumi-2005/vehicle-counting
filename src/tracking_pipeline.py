@@ -21,6 +21,7 @@ class TrackingPipeline:
         verbose=False
     ):
 
+        self.verbose = verbose
         # YOLO detector
         self.model = YOLO(model_path, task="detect", verbose=verbose)
 
@@ -47,7 +48,8 @@ class TrackingPipeline:
         result = self.model(
             frame,
             conf=self.conf,
-            device="cpu"
+            device="cpu",
+            verbose=self.verbose
         )[0]
 
         detections = sv.Detections.from_ultralytics(result)
