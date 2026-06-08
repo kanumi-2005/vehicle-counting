@@ -28,7 +28,7 @@ của các cặp đối tượng được khớp thành công: \begin{equation}
   \MOTP = \frac{\sum_{i,t} d_t^i}{\sum_t c_t},
 \end{equation} trong đó, $d_t^i$ là sai số khoảng cách giữa dự đoán và thực tế
 của đối tượng thứ $i$ tại khung hình $t$, và $c_t$ là số lượng đối tượng được
-khớp tại khung hình $t$.
+khớp tại khung hình $t$~\cite{bernardin2008clear}.
 
 Độ chính xác MOT (Multiple Object Tracking Accuracy, \MOTA) đánh giá độ chính
 xác tổng thể trong việc phát hiện và duy trì quỹ đạo của đối tượng. \MOTA\ tổng
@@ -37,7 +37,7 @@ ghép cặp/nhảy ID (mismatches): \begin{equation}
   \MOTA = 1 - \frac{\sum_t (m_t + fp_t + mme_t)}{\sum_t g_t},
 \end{equation} trong đó, $m_t$ là số lượng bỏ sót, $fp_t$ là số nhận diện sai,
 $mme_t$ là số lần nhảy ID, và $g_t$ là tổng số đối tượng thực tế tại khung hình
-$t$.
+$t$~\cite{bernardin2008clear}.
 
 Trong khi MOTA chú trọng nhiều vào độ chính xác phát hiện ở từng khung hình rời
 rạc, \IDFone\ (Identification F1-score) tập trung đánh giá khả năng duy trì
@@ -49,7 +49,7 @@ hiện thực tế và dự đoán: \begin{equation}
 bao dự đoán đúng cả vị trí và danh tính, \IDFP\ (Identification False
 Positives) là số hộp bao dự đoán sai danh tính hoặc vị trí, và \IDFN\
 (Identification False Negatives) là số hộp bao thực tế bị bỏ sót hoặc gán nhầm
-danh tính.
+danh tính~\cite{ristani2016idf1}.
 
 \HOTA\ là một độ đo mới nhằm khắc phục hạn chế của cả \MOTA\ và \IDFone\ bằng
 cách cân bằng một cách rõ ràng giữa độ chính xác phát hiện (Detection), liên
@@ -71,14 +71,14 @@ $\alpha$; $\TPA(c), \FNA(c), \FPA(c)$ lần lượt là số lượng phát hi�
 đúng ID của $c$, số lượng phát hiện là $c$ nhưng bị gán sai ID hoặc bị bỏ sót,
 và số lượng phát hiện bị gán sai thành ID của $c$. Hàm $\mathcal{A}(c)$ thể
 hiện độ chính xác liên kết (Association Accuracy) đối với mỗi True Positive
-$c$.
+$c$~\cite{luiten2020hota}.
 
 Để phản ánh chính xác cả khả năng định vị, điểm \HOTA\ tổng quát được tính bằng
 cách lấy tích phân (thường được xấp xỉ bằng giá trị trung bình) trên nhiều
 ngưỡng định vị $\alpha$ khác nhau (ví dụ từ 0.05 đến 0.95):
 \begin{equation}
-    \HOTA = \int_0^1 \HOTA_\alpha\, d\alpha \approx \frac{1}{19} \sum_{\alpha \in
-    \{0.05, 0.1, \dots, 0.95\}} \HOTA_\alpha.
+    \HOTA = \int_0^1 \HOTA_\alpha\, d\alpha \approx \frac{1}{19} \sum_{\alpha
+    \in \{0.05, 0.1, \dots, 0.95\}} \HOTA_\alpha.
 \end{equation} Tương tự ta có thể định nghĩa \DetA\ và \AssA. \DetA\ thể hiện
 độ chính xác phát hiện và \AssA\ thể hiện khả năng định danh nhất quán của bộ
 theo dõi. Do đó, \HOTA\ có sự cân bằng đánh giá giữa phát hiện và liên kết.
