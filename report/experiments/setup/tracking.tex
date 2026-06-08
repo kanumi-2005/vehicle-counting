@@ -1,0 +1,84 @@
+\paragraph{Theo dõi}
+
+\def\MOTA{\relax\ifmmode\mathrm{MOTA}\else MOTA\fi}
+\def\MOTP{\relax\ifmmode\mathrm{MOTP}\else MOTP\fi}
+\def\HOTA{\relax\ifmmode\mathrm{HOTA}\else HOTA\fi}
+\def\IDTP{\relax\ifmmode\mathrm{IDTP}\else IDTP\fi}
+\def\IDFN{\relax\ifmmode\mathrm{IDFN}\else IDFN\fi}
+\def\IDFP{\relax\ifmmode\mathrm{IDFP}\else IDFP\fi}
+\def\DetA{\relax\ifmmode\mathrm{DetA}\else DetA\fi}
+\def\AssA{\relax\ifmmode\mathrm{AssA}\else AssA\fi}
+\def\TPA{\relax\ifmmode\mathrm{TPA}\else TPA\fi}
+\def\FNA{\relax\ifmmode\mathrm{FNA}\else FNA\fi}
+\def\FPA{\relax\ifmmode\mathrm{FPA}\else FPA\fi}
+\def\IDFone{\relax\ifmmode\mathrm{IDF}_1\else IDF1\fi}
+\def\FP{\relax\ifmmode\mathrm{FP}\else FP\fi}
+\def\FN{\relax\ifmmode\mathrm{FN}\else FN\fi}
+\def\TP{\relax\ifmmode\mathrm{TP}\else TP\fi}
+
+Để đánh giá chất lượng của phương pháp theo dõi đa đối tượng, các độ đo được sử
+dụng bao gồm tập độ đo CLEAR (\MOTA, \MOTP), độ đo nhận dạng \IDFone, và độ đo
+bậc cao \HOTA.
+
+Tập độ đo CLEAR đánh giá hệ thống thông qua hai khía cạnh chính: độ chính xác
+định vị và độ chính xác theo dõi. Độ chuẩn xác MOT (Multiple Object Tracking
+Precision, \MOTP) thể hiện khả năng ước lượng vị trí chính xác của đối tượng
+độc lập với khả năng nhận dạng. \MOTP\ được tính bằng trung bình sai số vị trí
+của các cặp đối tượng được khớp thành công: \begin{equation}
+  \MOTP = \frac{\sum_{i,t} d_t^i}{\sum_t c_t},
+\end{equation} trong đó, $d_t^i$ là sai số khoảng cách giữa dự đoán và thực tế
+của đối tượng thứ $i$ tại khung hình $t$, và $c_t$ là số lượng đối tượng được
+khớp tại khung hình $t$~\cite{bernardin2008clear}.
+
+Độ chính xác MOT (Multiple Object Tracking Accuracy, \MOTA) đánh giá độ chính
+xác tổng thể trong việc phát hiện và duy trì quỹ đạo của đối tượng. \MOTA\ tổng
+hợp ba loại lỗi: bỏ sót (misses), nhận diện sai (false positives) và sai số
+ghép cặp/nhảy ID (mismatches): \begin{equation}
+  \MOTA = 1 - \frac{\sum_t (m_t + fp_t + mme_t)}{\sum_t g_t},
+\end{equation} trong đó, $m_t$ là số lượng bỏ sót, $fp_t$ là số nhận diện sai,
+$mme_t$ là số lần nhảy ID, và $g_t$ là tổng số đối tượng thực tế tại khung hình
+$t$~\cite{bernardin2008clear}.
+
+Trong khi MOTA chú trọng nhiều vào độ chính xác phát hiện ở từng khung hình rời
+rạc, \IDFone\ (Identification F1-score) tập trung đánh giá khả năng duy trì
+danh tính (ID) cố định của đối tượng qua thời gian dài. \IDFone\ tính toán tỷ
+lệ các phát hiện được gán đúng danh tính trên tổng số trung bình của các phát
+hiện thực tế và dự đoán: \begin{equation}
+  \IDFone = \frac{2 \times \IDTP}{2 \cdot \IDTP + \IDFP + \IDFN},
+\end{equation} trong đó, \IDTP\ (Identification True Positives) là số lượng hộp
+bao dự đoán đúng cả vị trí và danh tính, \IDFP\ (Identification False
+Positives) là số hộp bao dự đoán sai danh tính hoặc vị trí, và \IDFN\
+(Identification False Negatives) là số hộp bao thực tế bị bỏ sót hoặc gán nhầm
+danh tính~\cite{ristani2016idf1}.
+
+\HOTA\ là một độ đo mới nhằm khắc phục hạn chế của cả \MOTA\ và \IDFone\ bằng
+cách cân bằng một cách rõ ràng giữa độ chính xác phát hiện (Detection), liên
+kết (Association) và định vị (Localization) thành một chỉ số thống nhất duy
+nhất.  Tại một ngưỡng định vị $\alpha$, \HOTA\ được định nghĩa là trung bình
+nhân của điểm phát hiện và điểm liên kết: \begin{align}
+  \DetA_\alpha &= \frac{\lvert \TP \rvert}{ \lvert \TP \rvert + \lvert \FN
+  \rvert + \lvert \FP \rvert }, \\
+  \AssA_\alpha &= \frac{1}{\lvert \TP \rvert} \sum_{c \in \TP} \mathcal{A}(c),
+  \\
+  \mathcal{A}(c) &= \frac{\lvert \TPA(c) \rvert}{ \lvert \TPA(c) \rvert +
+  \lvert \FNA(c) \rvert + \lvert \FPA(c) \rvert}, \\
+  \HOTA_\alpha &= \sqrt{\frac{\sum_{c \in \TP} \mathcal{A}(c)}{\lvert
+  \TP \rvert + \lvert \FN \rvert + \lvert \FP \rvert}} = \sqrt{\DetA_\alpha
+  \cdot \AssA_\alpha},
+\end{align} trong đó, $\TP, \FN, \FP$ lần lượt là số lượng True Positives,
+False Negatives, và False Positives trong phát hiện được tính trên ngưỡng
+$\alpha$; $\TPA(c), \FNA(c), \FPA(c)$ lần lượt là số lượng phát hiện được gán
+đúng ID của $c$, số lượng phát hiện là $c$ nhưng bị gán sai ID hoặc bị bỏ sót,
+và số lượng phát hiện bị gán sai thành ID của $c$. Hàm $\mathcal{A}(c)$ thể
+hiện độ chính xác liên kết (Association Accuracy) đối với mỗi True Positive
+$c$~\cite{luiten2020hota}.
+
+Để phản ánh chính xác cả khả năng định vị, điểm \HOTA\ tổng quát được tính bằng
+cách lấy tích phân (thường được xấp xỉ bằng giá trị trung bình) trên nhiều
+ngưỡng định vị $\alpha$ khác nhau (ví dụ từ 0.05 đến 0.95):
+\begin{equation}
+    \HOTA = \int_0^1 \HOTA_\alpha\, d\alpha \approx \frac{1}{19} \sum_{\alpha
+    \in \{0.05, 0.1, \dots, 0.95\}} \HOTA_\alpha.
+\end{equation} Tương tự ta có thể định nghĩa \DetA\ và \AssA. \DetA\ thể hiện
+độ chính xác phát hiện và \AssA\ thể hiện khả năng định danh nhất quán của bộ
+theo dõi. Do đó, \HOTA\ có sự cân bằng đánh giá giữa phát hiện và liên kết.
