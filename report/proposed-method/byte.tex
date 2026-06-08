@@ -1,0 +1,21 @@
+\subsection{Thuật toán BYTE}
+
+Thuật toán BYTE được đề xuất trong~\cite{zhang2022bytetrack} là một phương pháp
+liên kết dữ liệu (data association) trong quá trình theo dõi đối tượng. BYTE
+khác các thuật toán trước nó, vốn chỉ giữ lại các hộp phát hiện với độ tin cậy
+cao, trao các hộp phát hiện độ tin cậy thấp cơ hội sau khi đã xem xét các hộp
+độ tin cậy cao. Cách hoạt động như sau: đầu tiên, thuật toán nhận vào hộp phát
+hiện được dự đoán trong khung hình hiện tại và chia nó thành hai phần bằng cách
+lấy ngưỡng trên độ tin cậy; các hộp có độ tin cậy cao được đem liên kết với các
+vết theo dõi được dự đoán theo Kalman Filter từ khung hình trước bằng độ đo
+tương đồng 1 qua Thuật toán Hungarian; sau đó, các hộp có độ tin cậy thấp được
+đem liên kết với các vết theo dõi còn lại theo độ đo tương đồng 2; cuối cùng,
+các hộp có độ tin cậy cao chưa được liên kết sẽ được tạo thành các vết theo dõi
+mới~\cite{zhang2022bytetrack}. Đây là một phương pháp liên kết dữ liệu đơn
+giản, hiệu quả và rất tổng quát. Ta có thể dùng bất cứ độ đo nào trong hai lần
+liên kết như IoU hay Re-ID.
+
+Trong bài báo gốc, tác giả sử dụng chung một ngưỡng chọn các hộp độ tin cậy cao
+và tạo ra các hộp theo dõi mới. Tuy nhiên, trong mã nguồn thực tế, hệ thống sẽ
+chọn hai giá trị khác nhau cho hai ngưỡng này nhằm tăng tính linh hoạt và ổn
+định.

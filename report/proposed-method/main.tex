@@ -1,0 +1,29 @@
+\section{Hướng tiếp cận dự kiến}
+
+\subsection{Các vấn đề của bài toán sau khi khảo sát các công trình liên quan}
+
+\subsection{Hướng tiếp cận của đề tài}
+
+Để giải quyết các vấn đề trên, đề tài lựa chọn mô hình YOLOv8n làm bộ phát hiện
+phương tiện. YOLOv8n là phiên bản có kích thước nhỏ của họ YOLOv8, cho phép đạt
+tốc độ suy luận cao trong khi vẫn duy trì độ chính xác phù hợp cho các ứng dụng
+giao thông thời gian thực. Mô hình được fine-tune trên bộ dữ liệu UA-DETRAC nhằm
+nâng cao khả năng nhận diện các loại phương tiện xuất hiện trong môi trường giao
+thông thực tế.
+
+Bên cạnh đó, đề tài sử dụng thuật toán BYTE để thực hiện theo dõi đa đối
+tượng. Khác với nhiều phương pháp theo dõi truyền thống chỉ sử dụng các phát
+hiện có độ tin cậy cao, BYTE tận dụng cả các phát hiện có độ tin cậy thấp
+trong quá trình liên kết đối tượng giữa các khung hình. Nhờ đó, thuật toán giúp
+giảm hiện tượng mất dấu, hạn chế thay đổi định danh đối tượng và nâng cao độ
+chính xác của quá trình đếm phương tiện.
+
+Hệ thống đề xuất bao gồm ba giai đoạn chính: phát hiện phương tiện bằng
+YOLOv8n, theo dõi phương tiện bằng BYTE và đếm phương tiện dựa trên quỹ
+đạo di chuyển của đối tượng qua vùng hoặc đường đếm được xác định trước. Cách
+tiếp cận này hướng tới mục tiêu cân bằng giữa độ chính xác và tốc độ xử lý,
+đáp ứng yêu cầu giám sát giao thông tự động và cung cấp dữ liệu gần thời gian
+thực cho các ứng dụng trong ITS.
+
+\input{yolov8}
+\input{byte}

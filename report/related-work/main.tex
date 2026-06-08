@@ -1,0 +1,71 @@
+\section{Các nghiên cứu liên quan}
+
+Phần này trình bày các nghiên cứu liên quan cho các bài toán phát hiện, theo
+dõi và đếm phương tiện.
+
+\subsection{Phát hiện phương tiện}
+
+Phát hiện phương tiện là một trong bước đầu tiên để nhận được các thông tin
+trong luồng giao thông. Phát hiện nhằm xác định vị trí và phân loại phương
+tiện.
+
+Các phương pháp thị giác máy tính cổ điển có thể chia thành ba hướng: chênh
+lệch khung hình (frame difference) có ưu điểm về sự tối giản trong thuật toán
+và tốc độ tính toán nhanh, nhưng thường chỉ nhận diện được một phần đối tượng
+chuyển động do hạn chế của việc đối chiếu sự khác biệt giữa các khung hình liên
+tiếp \cite{song2019}. Phương pháp luồng quang học (optical flow) khắc phục được
+việc thiếu hụt thông tin bằng cách cung cấp trường chuyển động toàn diện trên
+toàn bức ảnh, song khối lượng tính toán khổng lồ lại làm suy giảm đáng kể tốc
+độ xử lý thời gian thực \cite{dai2019}. Đối với kỹ thuật trừ nền (background
+subtraction), đối tượng được trích xuất dựa trên độ lệch giữa ảnh đầu vào và mô
+hình bối cảnh; tuy nhiên, thách thức lớn nhất của kỹ thuật này là sự khó khăn
+trong việc duy trì một mô hình nền chuẩn xác trước các biến động môi trường như
+thay đổi ánh sáng hay bóng đổ \cite{dai2019}.
+
+Trong quá khứ, các phương pháp chủ yếu dựa vào các đặc trưng được thiết kế thủ
+công như SIFT, HOG và Haar-like, sau đó đưa các đặc trưng này vào bộ phân loại
+để huấn luyện, ví dụ SVM và Adaboost, v.v.~\cite{dai2019}. Tuy nhiên, phương
+pháp này có độ ổn định kém và tốc độ tính toán chậm.
+
+Hiện nay, hướng học sâu dùng mạng nơ-ron tích chập (CNN) khắc phục được nhiều
+hạn chế đó. Trong số các mô hình học sâu, nhóm hai giai đoạn (R-CNN, SPPNet,
+Fast R-CNN, Faster R-CNN) đạt độ chính xác cao nhờ sinh vùng đề xuất và sử dụng
+CNN để chiết xuất đặc trưng, nhưng tốc độ xử lý chậm, khó đáp ứng thời gian
+thực. Nhóm một giai đoạn (YOLO, SSD) đạt sự cân bằng tốt hơn giữa độ chính xác
+và tốc độ, phù hợp với các hệ thống giám sát giao thông. Các phiên bản YOLO mới
+hơn (YOLOv8, YOLOv9, YOLOv10, YOLOv11, YOLOv12, YOLOv26) liên tục cải tiến kiến
+trúc, tăng cường cơ chế chú ý và tối ưu hóa hậu xử lý, giúp nâng cao khả năng
+phát hiện vật thể và giảm độ trễ.
+
+\subsection{Theo dõi phương tiện}
+
+Mục tiêu của quá trình theo dõi phương tiện là xây dựng quỹ đạo chuyển động của
+đối tượng xuyên suốt các khung hình. Đối với bài toán theo dõi đa đối tượng
+(MOT), chiến lược chủ đạo là theo dõi dựa trên phát hiện (Detection-Based
+Tracking, DBT), trong đó quá trình ghép nối hoàn toàn phụ thuộc vào các hộp bao
+do mô hình nhận diện cung cấp. Các thuật toán nền tảng như SORT và DeepSORT đã
+định hình chiến lược này bằng cách kết hợp dự đoán động học và đối sánh đặc
+trưng ngoại hình. Dựa trên nền tảng đó, các phương pháp hiện đại như BYTE
+hay OC-SORT tiếp tục tối ưu hóa quá trình liên kết bằng cách tận dụng cả những
+hộp bao có độ tin cậy thấp và xử lý tốt hơn các tình huống vật thể bị che
+khuất, qua đó giảm thiểu đáng kể hiện tượng nhảy ID (ID switch) và duy trì quỹ
+đạo ổn định.
+
+\subsection{Đếm phương tiện}
+
+Đếm phương tiện sử dụng quỹ đạo đã theo dõi để thống kê số lượng, hướng và loại
+phương tiện. Các nghiên cứu hiện tại chủ yếu được phân loại thành ba hướng tiếp
+cận: phương pháp dựa trên hồi quy (regression-based), phân cụm (cluster-based)
+và phát hiện (detection-based) \cite{dai2019}. Phương pháp hồi quy tập trung mô
+hình hóa các hàm dự đoán thông qua việc khai thác đặc trưng không gian từ các
+vùng ảnh.  Mặc dù đạt hiệu quả cao trong các bối cảnh đông đúc (nơi ranh giới
+giữa các đối tượng không rõ ràng), phương pháp này lại gặp khó khăn trước hiện
+tượng biến dạng phối cảnh và các đối tượng có kích thước lớn, do chỉ có thể
+cung cấp vị trí bao quát của đối tượng \cite{shokri2025}. Phương pháp phân cụm
+tiến hành theo dõi các đặc trưng ngoại hình và động học của đối tượng xuyên
+suốt chuỗi khung hình nhằm thiết lập quỹ đạo, từ đó tổng hợp và phân cụm các
+quỹ đạo này để ước lượng số lượng thực thể. Phương pháp dựa trên phát hiện đang
+là phương pháp phổ biến trong bài toán đếm nhờ các kết quả tốt của quá trình
+phát hiện và theo dõi phương tiện. Tuy nhiên, yêu cầu tính toán sẽ lớn hơn so
+với các phương pháp trước và cần chi phí cao (GPU) để triển khai trên các thiết
+bị~\cite{shokri2025}.
