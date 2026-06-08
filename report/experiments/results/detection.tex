@@ -49,7 +49,7 @@ tập xác thực. Nhìn chung giá trị các hàm mất mát trên tập huấ
 hướng giảm dần theo số epoch mặc dù tăng nhẹ ở epoch thứ 15. Điều này cho thấy
 mô hình hội tụ ổn định trên tập huấn luyện.
 
-Tương tự, giá trị các hàm mất mát trên tập kiểm thử cũng có xu hướng giảm dần
+Tương tự, giá trị các hàm mất mát trên tập xác thực cũng có xu hướng giảm dần
 theo số epoch. Các giá trị này có dao động ở các epoch đầu nhưng dần ổn định ở
 nhưng epoch cuối. Từ epoch 10 đến 15, các giá trị này giảm mạnh cho thấy mô
 hình đã học được đặc trưng quan trọng và có khả năng tổng quát hoá tốt hơn. Sự
@@ -195,12 +195,11 @@ xe tải nhỏ, khoảng 13\% mẫu thực tế bị dự đoán thành lớp xe
 hình còn gặp khó khăn trong việc phân biệt hai loại phương tiện này. Điều này
 có thể xuất phát từ sự tương đồng về kích thước, hình dạng.
 
-Ngoài ra, một tỷ lệ đáng kể các vùng nền bị mô hình dự đoán thành
-lớp xe hơi. Điều này cho thấy mô hình có xu hướng ưu tiên phát hiện lớp xe
-hơi, dẫn đến việc một số vùng ảnh không chứa đối tượng nhưng có đặc trưng hình
-học hoặc kết cấu tương tự lớp xe hơi vẫn bị nhận dạng nhầm. Hiện tượng này có
-thể xuất phát từ sự tương đồng về đặc trưng giữa một số vùng nền và đối tượng
-xe hơi, kết hợp với sự mất cân bằng phân bố nhãn trong tập dữ liệu.
+Ngoài ra, một tỷ lệ đáng kể các vùng nền bị mô hình dự đoán thành lớp xe hơi.
+Điều này cho thấy mô hình có xu hướng ưu tiên dự đoán lớp xe hơi, một phần do
+sự mất cân bằng phân bố nhãn trong tập dữ liệu. Bên cạnh đó, bộ dữ liệu còn
+chứa các vùng bỏ qua với các đối tượng nhỏ hoặc bị che khuất, làm gia tăng các
+trường hợp dự đoán xuất hiện trên nền trong quá trình đánh giá.
 
 \paragraph{Nhận xét tổng kết}
 
@@ -219,4 +218,36 @@ nhỏ cũng như các dự đoán sai trên vùng nền, nhìn chung mô hình �
   \label{fig:confusion-matrix}
 \end{figure}
 
-\paragraph{Kết quả đánh giá trên tập kiểm thử}
+\subsubsection{Kết quả trên tập kiểm tra của mô hình YOLOv8n}
+
+\tablename~\ref{tab:test_result} trình bày các chỉ số đánh giá hiệu năng của
+mô hình trên tập kiểm tra. Mô hình đạt Precision bằng 0.6952 và Recall bằng
+0.6171. Điều này cho thấy mô hình có khả năng nhận diện đối tượng tương đối
+tốt, với 69.52\% các dự đoán là chính xác và phát hiện được 61.71\% tổng số
+đối tượng thực tế trong tập kiểm tra.
+
+Ngoài ra, mô hình đạt mAP@50 bằng 0.6241 và mAP@50--95 bằng 0.4710. Kết quả
+này cho thấy mô hình có khả năng định vị và phân loại đối tượng khá hiệu quả.
+Tuy nhiên, sự chênh lệch giữa hai chỉ số mAP cho thấy độ chính xác định vị của
+mô hình giảm khi yêu cầu về ngưỡng IoU trở nên nghiêm ngặt hơn.
+
+Nhìn chung, mô hình đạt hiệu năng tương đối tốt trên tập kiểm tra và cho thấy
+khả năng tổng quát hóa hiệu quả đối với dữ liệu chưa xuất hiện trong quá
+trình huấn luyện.
+
+\begin{table}[h]
+\centering
+\caption{Kết quả đánh giá mô hình trên tập kiểm tra}
+\label{tab:test_result}
+  \begin{tblr}{
+    colspec = {l|c},
+    hline{2},
+    vline{2}
+  }
+  Chỉ số & Giá trị \\
+  Precision & 0.6952 \\
+  Recall & 0.6171 \\
+  mAP@50 & 0.6241 \\
+  mAP@50--95 & 0.4710 \\
+  \end{tblr}
+\end{table}
