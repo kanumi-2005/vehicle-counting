@@ -1,0 +1,84 @@
+\usepackage{polyglossia}
+\setdefaultlanguage{vietnamese}
+\setotherlanguage{english}
+
+\usepackage{graphicx}
+\usepackage{tikz}
+
+\usepackage{tabularray}
+\usepackage[skip=4pt]{caption}
+\captionsetup*[table]{position=above}
+
+\usepackage{import}
+\usepackage[inline]{enumitem}
+\usepackage{amsmath,amsfonts,amssymb}
+
+\usepackage{apacite}
+
+\usetheme{default}
+\usecolortheme{seahorse}
+
+\usepackage{algorithm2e}
+\renewcommand{\algorithmname}{Thuật toán}
+\SetAlgorithmName{\algorithmname}{\algorithmname}{Danh sách thuật toán}
+\SetKwProg{Fn}{function}{}{end}
+\SetKw{KwStep}{step}
+\SetKw{KwFrom}{from}
+\SetKw{KwDownTo}{down~to}
+\SetKw{KwBreak}{break}
+\DontPrintSemicolon
+
+\ExplSyntaxOn
+
+\setbeamertemplate{headline}{
+  \begin{beamercolorbox}[
+    wd=\paperwidth,
+    ht=2.5ex,
+    dp=1ex,
+    leftskip=1em,
+    rightskip=1em
+  ]{section ~ in ~ head/foot}
+    \insertsectionhead
+
+    \cs_if_eq:NNF \insertsubsectionhead \empty
+    {
+      \ | \ \insertsubsectionhead
+    }
+
+    \hfill \insertframenumber
+  \end{beamercolorbox}
+}
+
+\setbeamertemplate{navigation ~ symbols}{}
+
+\AtBeginSection[]{
+    \begin{frame}{Mục ~ lục}
+        \tableofcontents[currentsection]
+    \end{frame}
+}
+
+\ExplSyntaxOff
+
+\newcommand{\resourcespath}{resources}
+\newcommand{\figurespath}{\resourcespath/figures}
+\newcommand{\imagespath}{\figurespath}
+\graphicspath{{\figurespath}}
+\newcommand{\tablespath}{\resourcespath/tables}
+
+\newcommand{\bdiv}{\mathbin{\text{div}}}
+
+\usepackage{amsthm}
+\renewcommand{\proofname}{Chứng minh}
+
+\theoremstyle{plain} % default
+\newtheorem{thm}{Định lý}
+\newtheorem{lem}[thm]{Bổ đề}
+\newtheorem{prop}[thm]{Mệnh đề}
+\newtheorem{cor}[thm]{Hệ quả}
+
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Định nghĩa}
+\newtheorem{exmp}[thm]{Ví dụ}
+
+\theoremstyle{remark}
+\newtheorem*{rem}{Nhận xét}
