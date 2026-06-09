@@ -1,0 +1,222 @@
+\subsubsection{Kết quả quá trình huấn luyện YOLOv8n}
+
+\paragraph{Phân phối nhãn, vị trí và kích thước đối tượng}
+
+\figurename~\ref{fig:labels} trình bày phân bố số lượng mẫu theo từng lớp đối
+tượng, đồng thời thể hiện phân bố vị trí tâm và kích thước của các hộp bao
+trong tập dữ liệu. Có thể nhận thấy số lượng mẫu giữa các lớp có sự chênh lệch
+đáng kể. Trong đó, lớp xe hơi chiếm tỷ lệ lớn nhất với 409,093 mẫu, tiếp theo
+là lớp xe tải nhỏ với 47,412 mẫu và lớp xe buýt với 22,621 mẫu. Lớp khác chỉ
+bao gồm 3\,068 mẫu, chiếm tỷ lệ rất nhỏ trong toàn bộ tập dữ liệu. Kết quả này
+cho thấy tập dữ liệu tồn tại sự mất cân bằng về số lượng mẫu giữa các lớp đối
+tượng.
+
+Biểu đồ phân bố tâm hộp bao cho thấy các đối tượng xuất hiện trên nhiều vị trí
+khác nhau trong ảnh, tuy nhiên mật độ phân bố không đồng đều. Phần lớn đối
+tượng tập trung ở khu vực trung tâm và nửa dưới khung hình, phản ánh đặc điểm
+của các cảnh giao thông khi phương tiện thường xuất hiện trên mặt đường và
+trong vùng quan sát chính của camera. Mặc dù vậy, dữ liệu vẫn bao phủ tương
+đối đầy đủ các vị trí trong ảnh, góp phần tăng tính đa dạng của tập huấn
+luyện.
+
+Đối với kích thước đối tượng, phân bố chiều rộng và chiều cao của hộp bao cho
+thấy phần lớn các đối tượng có kích thước nhỏ. Các giá trị chiều rộng và chiều
+cao tập trung chủ yếu ở vùng thấp, trong khi số lượng đối tượng có kích thước
+lớn giảm dần theo xu hướng phân bố đuôi dài. Đặc điểm này có thể được giải
+thích bởi vị trí lắp đặt camera thường ở khoảng cách đủ xa nhằm bao quát được
+một khu vực giao thông rộng hơn. Do đó, nhiều phương tiện chỉ chiếm một phần
+nhỏ diện tích ảnh, dẫn đến sự xuất hiện với tần suất cao của các hộp bao có
+kích thước nhỏ trong tập dữ liệu.
+
+Nhìn chung, tập dữ liệu có đặc trưng là phân bố nhãn không đồng đều, vị trí
+xuất hiện của đối tượng tập trung chủ yếu ở khu vực trung tâm ảnh và phần lớn
+đối tượng có kích thước nhỏ. Đây là những đặc điểm quan trọng cần được xem xét
+trong quá trình huấn luyện và đánh giá mô hình phát hiện đối tượng.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{labels}
+  \caption{Phân bố nhãn, vị trí tâm và kích thước hộp bao của các đối tượng
+  trong tập dữ liệu.}
+  \label{fig:labels}
+\end{figure}
+
+\paragraph{Kết quả hội tụ của mô hình}
+
+\figurename~\ref{results} trình bày sự thay đổi của các hàm mất mát và các chỉ
+số đánh giá trong quá trình fine-tuning mô hình YOLOv8n trên tập huấn luyện và
+tập xác thực. Nhìn chung giá trị các hàm mất mát trên tập huấn luyện có xu
+hướng giảm dần theo số epoch mặc dù tăng nhẹ ở epoch thứ 15. Điều này cho thấy
+mô hình hội tụ ổn định trên tập huấn luyện.
+
+Tương tự, giá trị các hàm mất mát trên tập kiểm thử cũng có xu hướng giảm dần
+theo số epoch. Các giá trị này có dao động ở các epoch đầu nhưng dần ổn định ở
+nhưng epoch cuối. Từ epoch 10 đến 15, các giá trị này giảm mạnh cho thấy mô
+hình đã học được đặc trưng quan trọng và có khả năng tổng quát hoá tốt hơn. Sự
+khác biết giữa các đường cong hàm mất mát trên tập huấn luyện và tập xác thực
+không đáng kể cho thấy mô hình chưa xuất hiện dấu hiệu quá khớp nghiêm trọng.
+
+Đối với các chỉ số đánh giá, Precision, Recall, mAP@0.5 và mAP@0.5:0.95 đều có
+xu hướng tăng trong quá trình huấn luyện. ặc dù một số epoch ghi nhận sự sụt
+giảm nhẹ, các chỉ số này nhanh chóng phục hồi và đạt giá trị ổn định ở giai
+đoạn cuối. Kết quả cho thấy khả năng phát hiện và định vị đối tượng của mô
+hình được cải thiện đáng kể sau quá trình fine-tuning.
+
+Nhìn chung, mô hình YOLOv8n đạt trạng thái hội tụ ổn định trên cả tập huấn
+luyện và tập xác thực, đồng thời duy trì hiệu năng tốt trong các epoch cuối
+của quá trình huấn luyện.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{results}
+  \caption{Kết quả huấn luyện và xác thực của mô hình YOLOv8n trong
+  quá trình fine-tuning}
+  \label{results}
+\end{figure}
+
+
+\paragraph{Đánh giá hiệu năng phát hiện đối tượng trên tập xác thực}
+
+\subparagraph{Đường cong Precision}
+
+\figurename~\ref{fig:p-curve} trình bày sự thay đổi của chỉ số Precision theo
+các ngưỡng confidence khác nhau. Kết quả cho thấy Precision có xu hướng tăng
+khi confidence tăng. Ở các ngưỡng confidence thấp, mô hình giữ lại nhiều hộp
+bao được dự đoán, bao gồm cả những dự đoán có độ tin cậy thấp, dẫn đến số
+lượng dự đoán sai lớn và làm giảm Precision. Khi confidence tăng, các hộp bao
+có độ tin cậy thấp dần bị loại bỏ, giúp giảm số lượng dự đoán sai và cải thiện
+độ chính xác của mô hình. Đối với toàn bộ các lớp, Precision đạt giá trị cực
+đại bằng 1.00 tại ngưỡng confidence khoảng 0.973. Ngoài ra Precision của lớp
+xe buýt duy trì giá trị cao hơn các lớp còn lại trong khi lớp xe tải nhỏ có
+Precision thấp hơn các lớp còn lại.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{BoxP_curve}
+  \caption{Đường cong Precision theo ngưỡng confidence}
+  \label{fig:p-curve}
+\end{figure}
+
+\subparagraph{Đường cong Recall}
+
+\figurename~\ref{fig:r-curve} trình bày sự thay đổi của chỉ số Recall theo các
+ngưỡng confidence khác nhau. Kết quả cho thấy Recall có xu hướng giảm khi
+confidence tăng. Ở các ngưỡng confidence thấp, mô hình giữ lại hầu hết các
+hộp bao được dự đoán, nhờ đó số lượng đối tượng bị bỏ sót ở mức thấp nên
+Recall đạt giá trị cao. Tuy nhiên, khi confidence tăng, các hộp bao có độ tin
+cậy thấp dần bị loại bỏ, làm số lượng đối tượng bị bỏ sót tăng lên và khiến
+Recall giảm dần. Đối với toàn bộ các lớp, Recall đạt giá trị lớn nhất khoảng
+0.98 tại ngưỡng confidence bằng 0. Tương tư như Precision, lớp xe buýt vẫn có
+Recall cao hơn lớp còn lại và lớp xe tải nhỏ có Recall thấp hơn các lớp còn
+lại.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{BoxR_curve}
+  \caption{Đường cong Recall theo ngưỡng confidence}
+  \label{fig:r-curve}
+\end{figure}
+
+\subparagraph{Đường cong Precision--Recall}
+
+\figurename~\ref{fig:pr-curve} trình bày đường cong Precision--Recall của mô
+hình đối với từng lớp đối tượng. Kết quả cho thấy các đường cong đều nằm gần
+góc trên bên phải của đồ thị, phản ánh khả năng duy trì đồng thời Precision và
+Recall ở mức cao trên phần lớn miền giá trị. Đối với toàn bộ các lớp, mô hình
+đạt giá trị mAP@0.5 bằng 0.953, cho thấy hiệu năng phát hiện đối tượng rất tốt
+trên tập xác thực.
+
+Xét theo từng lớp, lớp xe buýt đạt giá trị AP cao nhất với 0.989, cho thấy khả
+năng nhận dạng và định vị đối tượng của mô hình đối với lớp này là tốt nhất.
+Tiếp theo là lớp xe hơi với AP đạt 0.970. Trong khi đó, lớp khác và xe tải nhỏ
+đạt AP lần lượt là 0.936 và 0.915, thấp hơn so với các lớp còn lại, cho thấy
+mô hình vẫn gặp một số khó khăn trong việc phát hiện và phân biệt các đối
+tượng thuộc hai lớp này. Tuy nhiên, các giá trị AP đều lớn hơn 0.9, chứng tỏ
+mô hình đạt hiệu năng phát hiện ổn định và có khả năng tổng quát hóa tốt trên
+tất cả các lớp đối tượng.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{BoxPR_curve}
+  \caption{Đường cong Precision--Recall của mô hình}
+  \label{fig:pr-curve}
+\end{figure}
+
+\subparagraph{Đường cong F1-score}
+
+\figurename~\ref{fig:f1-curve} trình bày sự thay đổi của chỉ số F1-score theo
+các ngưỡng confidence khác nhau. Kết quả cho thấy F1-score của mô hình tăng
+nhanh khi confidence tăng từ 0 đến khoảng 0.2. Ở các ngưỡng confidence thấp,
+mô hình giữ lại phần lớn các hộp bao được dự đoán, bao gồm cả những dự đoán có
+độ tin cậy thấp, dẫn đến số lượng dự đoán sai tăng lên và làm giảm Precision
+mặc dù Recall vẫn được duy trì ở mức cao. Khi confidence tăng từ khoảng 0.2
+đến 0.8, các dự đoán có độ tin cậy thấp dần bị loại bỏ, giúp cải thiện
+Precision trong khi Recall vẫn giữ ở mức tương đối cao, từ đó F1-score đạt giá
+trị lớn và ổn định trong khoảng này. Khi confidence tiếp tục tăng từ khoảng
+0.8 đến 1, F1-score bắt đầu giảm dần do ở các ngưỡng confidence cao, nhiều hộp
+bao chứa đối tượng thực sự cũng bị loại bỏ khỏi kết quả dự đoán, làm Recall
+giảm mạnh và kéo theo sự suy giảm đáng kể của F1-score.
+
+Đối với toàn bộ các lớp, F1-score đạt giá trị cực đại khoảng 0.90 tại ngưỡng
+confidence xấp xỉ 0.572, cho thấy đây là ngưỡng mang lại sự cân bằng tốt nhất
+giữa Precision và Recall. Xét theo từng lớp đối tượng, tương tự, lớp xe buýt
+đạt F1-score cao nhất trên phần lớn miền confidence, cho thấy mô hình có khả
+năng phát hiện và phân loại lớp đối tượng này tốt hơn so với các lớp còn lại.
+Ngược lại, lớp xe tải nhỏ F1-score thấp nhất, phản ánh mức độ khó khăn lớn hơn
+trong quá trình nhận dạng và phân biệt lớp đối tượng này.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{BoxF1_curve}
+  \caption{Đường cong F1-score theo ngưỡng confidence}
+  \label{fig:f1-curve}
+\end{figure}
+
+\subparagraph{Ma trận nhầm lẫn chuẩn hóa}
+
+\figurename~\ref{fig:confusion-matrix} trình bày ma trận nhầm lẫn chuẩn hóa
+của mô hình trên tập dữ liệu xác thực. Các giá trị trên đường chéo chính đều ở
+mức cao, cho thấy phần lớn các đối tượng được phân loại đúng vào lớp tương
+ứng. Cụ thể, lớp xe buýt đạt tỷ lệ nhận dạng đúng cao nhất với giá trị khoảng
+0.98, tiếp theo là lớp xe hơi với 0.97. Kết quả này phù hợp với chỉ số AP và
+F1-score đã phân tích trước đó, trong đó lớp xe buýt và xe hơi đều đạt các giá
+trị AP và F1-score cao hơn so với các lớp còn lại. Điều này cho thấy mô hình
+có khả năng học được các đặc trưng đặc trưng của hai lớp đối tượng này và phân
+biệt chúng một cách hiệu quả.
+
+Ngược lại, lớp xe tải nhỏ và khác có tỷ lệ phân loại đúng thấp hơn, cùng đạt
+khoảng 0.83. Kết quả này cũng nhất quán với các chỉ số AP và F1-score đã được
+trình bày trước đó, khi đây là hai lớp có hiệu năng thấp hơn so với xe hơi và
+xe buýt.
+
+Ngoài các giá trị trên đường chéo chính, một số trường hợp nhầm lẫn giữa các
+lớp cũng được thể hiện thông qua các phần tử ngoài đường chéo. Đối với lớp
+xe tải nhỏ, khoảng 13\% mẫu thực tế bị dự đoán thành lớp xe hơi, cho thấy mô
+hình còn gặp khó khăn trong việc phân biệt hai loại phương tiện này. Điều này
+có thể xuất phát từ sự tương đồng về kích thước, hình dạng.
+
+Ngoài ra, một tỷ lệ đáng kể các vùng nền bị mô hình dự đoán thành
+lớp xe hơi. Điều này cho thấy mô hình có xu hướng ưu tiên phát hiện lớp xe
+hơi, dẫn đến việc một số vùng ảnh không chứa đối tượng nhưng có đặc trưng hình
+học hoặc kết cấu tương tự lớp xe hơi vẫn bị nhận dạng nhầm. Hiện tượng này có
+thể xuất phát từ sự tương đồng về đặc trưng giữa một số vùng nền và đối tượng
+xe hơi, kết hợp với sự mất cân bằng phân bố nhãn trong tập dữ liệu.
+
+\paragraph{Nhận xét tổng kết}
+
+Kết quả đánh giá trên tập xác thực cho thấy mô hình YOLOv8n sau quá trình
+fine-tuning đạt hiệu năng phát hiện đối tượng tốt với các chỉ số Precision,
+Recall, F1-score và mAP@0.5 đều ở mức cao. Mô hình nhận dạng hiệu quả các lớp
+xe hơi và xe buýt, đồng thời duy trì khả năng tổng quát hóa tốt trên tập dữ
+liệu xác thực. Mặc dù vẫn còn một số trường hợp nhầm lẫn giữa xe hơi và xe tải
+nhỏ cũng như các dự đoán sai trên vùng nền, nhìn chung mô hình đã hội tụ ổn
+định và đạt được hiệu năng tương đối tốt.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{confusion_matrix_normalized}
+  \caption{Ma trận nhầm lẫn chuẩn hóa của mô hình}
+  \label{fig:confusion-matrix}
+\end{figure}
+
+\paragraph{Kết quả đánh giá trên tập kiểm thử}
