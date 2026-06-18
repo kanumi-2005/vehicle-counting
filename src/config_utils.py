@@ -16,6 +16,7 @@ DEFAULT_CONFIG = {
         "preprocessed_images_dir": "data/preprocessed",
         "split_manifest_path": "data/preprocessed/splits.json",
         "yolo_output_dir": "data/yolo",
+        "yolo_data_yaml_path": "data/yolo/data.yaml",
         "trackeval_data_dir": "data/trackeval/data",
         "tracker_output_dir": "data/trackeval/data/trackers",
         "model_path": "weights/best.pt"

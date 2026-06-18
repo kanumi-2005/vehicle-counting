@@ -138,7 +138,43 @@ def process_sequence(xml_path, image_sequence_dir, split_name, config, copy_imag
     print(f"[OK] YOLO {split_name}: {sequence_name} ({written_frames} frames)")
 
 
-def run(config, split_names, sequence_filter, copy_images):
+def get_yolo_class_names(config):
+    class_map = config["yolo"]["class_map"]
+    id_to_name = {class_id: name for name, class_id in class_map.items()}
+    return [id_to_name[class_id] for class_id in sorted(id_to_name)]
+
+
+def write_yolo_data_yaml(config, data_yaml_path=None):
+    output_dir = project_path(config["paths"]["yolo_output_dir"])
+    yaml_path = (
+        project_path(data_yaml_path)
+        if data_yaml_path
+        else project_path(config["paths"]["yolo_data_yaml_path"])
+    )
+    class_names = get_yolo_class_names(config)
+
+    yaml_path.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        f"path: {output_dir}",
+        "train: train/images",
+        "val: val/images",
+        "test: test/images",
+        f"nc: {len(class_names)}",
+        "names:",
+    ]
+    lines.extend(
+        f"  {class_id}: {class_name}"
+        for class_id, class_name in enumerate(class_names)
+    )
+
+    with open(yaml_path, "w", encoding="utf-8") as file_out:
+        file_out.write("\n".join(lines))
+        file_out.write("\n")
+
+    print(f"[OK] YOLO data config saved: {yaml_path}")
+
+
+def run(config, split_names, sequence_filter, copy_images, data_yaml_path=None):
     manifest = load_split_manifest(config)
     selected_splits = ["train", "val", "test"] if "all" in split_names else split_names
     requested_sequences = set(sequence_filter or [])
@@ -177,6 +213,8 @@ def run(config, split_names, sequence_filter, copy_images):
                 copy_images=copy_images,
             )
 
+    write_yolo_data_yaml(config, data_yaml_path)
+
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -201,6 +239,10 @@ def parse_args():
         default=[],
         help="Only convert this sequence. Can be passed multiple times."
     )
+    parser.add_argument(
+        "--data-yaml-path",
+        help="Override paths.yolo_data_yaml_path for the generated data.yaml."
+    )
     return parser.parse_args()
 
 
@@ -211,7 +253,13 @@ def main():
         return
 
     try:
-        run(config, args.split or ["all"], args.sequence, args.copy_images)
+        run(
+            config=config,
+            split_names=args.split or ["all"],
+            sequence_filter=args.sequence,
+            copy_images=args.copy_images,
+            data_yaml_path=args.data_yaml_path,
+        )
     except FileNotFoundError as error:
         print(f"[ERROR] {error}", file=sys.stderr)
         sys.exit(1)
