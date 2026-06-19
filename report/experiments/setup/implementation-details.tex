@@ -1,0 +1,20 @@
+\subsubsection{Fine-tuning mô hình YOLOv8n}
+
+Mô hình YOLOv8n được khởi tạo từ trọng số tiền huấn luyện trên tập dữ liệu
+COCO và được fine-tuning trên bộ dữ liệu UA-DETRAC. Bộ dữ liệu được chia theo
+tỷ lệ 80\% cho tập huấn luyện và 20\% cho tập xác thực nhằm đánh giá khả năng
+tổng quát hóa của mô hình trên dữ liệu chưa được sử dụng trong quá trình huấn
+luyện. Trong quá trình fine-tuning, 10 lớp đầu tiên của mạng được đóng băng
+nhằm giữ lại các đặc trưng mức thấp đã được học từ tập dữ liệu COCO, trong khi
+các lớp còn lại được cập nhật trọng số để thích nghi với đặc trưng của bộ dữ
+liệu UA-DETRAC.
+
+Các tham số huấn luyện được thiết lập như sau:
+\begin{itemize}
+  \item Số epoch: 20.
+  \item Kích thước ảnh đầu vào: 640 $\times$ 640 pixel.
+  \item Batch size: 64.
+  \item Thiết bị huấn luyện: Google Colab với GPU NVIDIA Tesla T4.
+  \item Trọng số khởi tạo: YOLOv8n được tiền huấn luyện trên tập dữ liệu COCO.
+  \item Số lớp được đóng băng: 10 lớp đầu tiên.
+\end{itemize}

@@ -1,248 +1,240 @@
-import os
+#!/usr/bin/env python3
+import argparse
+import json
+import sys
 import xml.etree.ElementTree as ET
-import random
 
-CONFIG = {
-    "RAW_TRAIN_XML": "./datasets/raw/DETRAC-Train-Annotations-XML",
-    "RAW_TEST_XML": "./datasets/raw/DETRAC-Test-Annotations-XML",
-    "OUTPUT": "./datasets/trackeval/data",
-    "BENCHMARK": "ua-detrac",
-    "TRAIN_VAL_SPLIT": 0.8,
-    "RANDOM_SEED": 42
-}
+from config_utils import (
+    add_common_config_args,
+    load_config_from_args,
+    project_path,
+)
 
 
-# =========================
-# SAFE FLOAT
-# =========================
-def safe_float(v, default=0.0):
+def safe_float(value, default=0.0):
     try:
-        return float(v)
+        return float(value)
     except (ValueError, TypeError):
         return default
 
 
-# =========================
-# WRITE GT
-# =========================
-def write_gt(frames, path):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+def safe_int(value, default=0):
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return default
 
-    def frame_id(f):
-        try:
-            return int(f.attrib.get("num", 0)) + 1
-        except (ValueError, TypeError):
-            return 1
 
-    frames = sorted(frames, key=frame_id)
+def load_split_manifest(config):
+    manifest_path = project_path(config["paths"]["split_manifest_path"])
+    if not manifest_path.exists():
+        raise FileNotFoundError(
+            f"Split manifest not found: {manifest_path}. "
+            "Run src/preprocessing.py first."
+        )
+    with open(manifest_path, "r", encoding="utf-8") as file_in:
+        return json.load(file_in)
+
+
+def list_xml_files(annotation_dir):
+    if not annotation_dir.exists():
+        return []
+    return sorted(annotation_dir.glob("*.xml"), key=lambda path: path.name)
+
+
+def get_sequence_name(xml_path):
+    root = ET.parse(xml_path).getroot()
+    return root.attrib.get("name", xml_path.stem)
+
+
+def write_gt(frames, output_path):
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     lines = []
 
-    for f in frames:
-        try:
-            fid = int(f.attrib.get("num", 0)) + 1
-        except (ValueError, TypeError):
+    for frame in sorted(frames, key=lambda item: safe_int(item.attrib.get("num"))):
+        frame_id = safe_int(frame.attrib.get("num"))
+        if frame_id <= 0:
             continue
 
-        targets = f.findall(".//target")
-        if len(targets) == 0:
-            continue
-
-        for obj in targets:
-            box = obj.find("box")
+        for target in frame.findall(".//target"):
+            box = target.find("box")
             if box is None:
                 continue
 
-            x = safe_float(box.attrib.get("left"))
-            y = safe_float(box.attrib.get("top"))
-            w = safe_float(box.attrib.get("width"))
-            h = safe_float(box.attrib.get("height"))
-
-            if w <= 0 or h <= 0:
+            width = safe_float(box.attrib.get("width"))
+            height = safe_float(box.attrib.get("height"))
+            if width <= 0 or height <= 0:
                 continue
 
-            try:
-                oid = int(obj.attrib.get("id", -1))
-            except (ValueError, TypeError):
-                oid = -1
+            object_id = safe_int(target.attrib.get("id"), default=-1)
+            attribute = target.find("attribute")
+            truncation_ratio = 0.0
+            if attribute is not None:
+                truncation_ratio = safe_float(
+                    attribute.attrib.get("truncation_ratio"),
+                    default=0.0,
+                )
+            visibility = max(0.0, min(1.0, 1.0 - truncation_ratio))
 
-            attr = obj.find("attribute")
-
-            # Visibility safety check
-            trunc = 0.0
-            if attr is not None:
-                raw_trunc = attr.attrib.get("truncation_ratio", 0.0)
-                trunc = safe_float(raw_trunc)
-
-            visibility = max(0.0, min(1.0, 1.0 - trunc))
-
-            # =========================
-            # MOT FORMAT (STRICT)
-            # =========================
-            line = (
-                f"{fid},{oid},{x:.2f},{y:.2f},{w:.2f},{h:.2f},"
-                f"1,1,{visibility:.2f}"
+            lines.append(
+                f"{frame_id},{object_id},"
+                f"{safe_float(box.attrib.get('left')):.2f},"
+                f"{safe_float(box.attrib.get('top')):.2f},"
+                f"{width:.2f},{height:.2f},1,1,{visibility:.2f}"
             )
-            lines.append(line)
 
-    with open(path, "w") as file_out:
+    with open(output_path, "w", encoding="utf-8") as file_out:
         file_out.write("\n".join(lines))
+        if lines:
+            file_out.write("\n")
 
 
-# =========================
-# SEQINFO
-# =========================
-def write_seqinfo(seq_path, name, frames):
-    os.makedirs(seq_path, exist_ok=True)
+def get_preprocessed_sequence_length(sequence_name, config):
+    preprocessed_images_dir = project_path(config["paths"]["preprocessed_images_dir"])
+    sequence_image_dir = preprocessed_images_dir / sequence_name
+    if not sequence_image_dir.exists():
+        raise FileNotFoundError(
+            f"Preprocessed image directory not found: {sequence_image_dir}. "
+            "Run src/preprocessing.py first."
+        )
 
-    seq_len = 0
-    if frames:
-        seq_len = max(int(f.attrib.get("num", 0)) for f in frames) + 1
+    sequence_length = len(list(sequence_image_dir.glob("img*.jpg")))
+    if sequence_length == 0:
+        raise FileNotFoundError(
+            f"No preprocessed images found in: {sequence_image_dir}. "
+            "Run src/preprocessing.py first."
+        )
 
-    info_content = (
-        f"[Sequence]\n"
-        f"name={name}\n"
-        f"imDir=img1\n"
-        f"frameRate=25\n"
-        f"seqLength={seq_len}\n"
-        f"imWidth=960\n"
-        f"imHeight=540\n"
-        f"imExt=.jpg\n"
+    return sequence_length
+
+
+def write_seqinfo(sequence_dir, sequence_name, sequence_length, config):
+    sequence_dir.mkdir(parents=True, exist_ok=True)
+    dataset_config = config["dataset"]
+    content = (
+        "[Sequence]\n"
+        f"name={sequence_name}\n"
+        "imDir=img1\n"
+        f"frameRate={dataset_config['frame_rate']}\n"
+        f"seqLength={sequence_length}\n"
+        f"imWidth={dataset_config['image_width']}\n"
+        f"imHeight={dataset_config['image_height']}\n"
+        f"imExt={dataset_config['image_ext']}\n"
     )
+    with open(sequence_dir / "seqinfo.ini", "w", encoding="utf-8") as file_out:
+        file_out.write(content)
 
-    with open(os.path.join(seq_path, "seqinfo.ini"), "w") as f:
-        f.write(info_content)
 
-
-# =========================
-# PROCESS SEQUENCE
-# =========================
-def process(xml_path, split_name):
-    """
-    Parses the XML and saves it to the correct split directory.
-    """
+def process_sequence(xml_path, split_name, config):
     tree = ET.parse(xml_path)
     root = tree.getroot()
-
-    default_name = os.path.basename(xml_path).replace(".xml", "")
-    seq_name = root.attrib.get("name", default_name)
-
+    sequence_name = root.attrib.get("name", xml_path.stem)
     frames = root.findall(".//frame")
 
-    if len(frames) == 0:
-        print(f"[SKIP] Empty: {seq_name}")
+    if not frames:
+        print(f"[SKIP] Empty: {sequence_name}")
         return None
 
-    base = os.path.join(
-        CONFIG["OUTPUT"],
-        "gt",
-        f"{CONFIG['BENCHMARK']}-{split_name}",
-        seq_name
+    trackeval_data_dir = project_path(config["paths"]["trackeval_data_dir"])
+    benchmark_name = config["dataset"]["benchmark_name"]
+    sequence_dir = trackeval_data_dir / "gt" / f"{benchmark_name}-{split_name}" / sequence_name
+    sequence_length = get_preprocessed_sequence_length(sequence_name, config)
+
+    write_gt(frames, sequence_dir / "gt" / "gt.txt")
+    write_seqinfo(sequence_dir, sequence_name, sequence_length, config)
+    print(
+        f"[OK] TrackEval {split_name}: {sequence_name} "
+        f"(seqLength={sequence_length}, annotated_frames={len(frames)})"
     )
-
-    gt_path = os.path.join(base, "gt", "gt.txt")
-
-    write_gt(frames, gt_path)
-    write_seqinfo(base, seq_name, frames)
-
-    print(f"[OK] {split_name}: {seq_name} | frames: {len(frames)}")
-
-    return seq_name
+    return sequence_name
 
 
-# =========================
-# SEQMAP
-# =========================
-def write_seqmap(names, split_name):
-    """
-    Generates the corresponding seqmap file for each data split.
-    """
-    names = [n for n in names if n]
-    if not names:
+def write_seqmap(sequence_names, split_name, config):
+    trackeval_data_dir = project_path(config["paths"]["trackeval_data_dir"])
+    benchmark_name = config["dataset"]["benchmark_name"]
+    seqmap_dir = trackeval_data_dir / "gt" / "seqmaps"
+    seqmap_dir.mkdir(parents=True, exist_ok=True)
+    seqmap_path = seqmap_dir / f"{benchmark_name}-{split_name}.txt"
+
+    with open(seqmap_path, "w", encoding="utf-8") as file_out:
+        file_out.write("name\n")
+        for sequence_name in sequence_names:
+            file_out.write(sequence_name + "\n")
+
+    print(f"[OK] Seqmap saved: {seqmap_path}")
+
+
+def run(config, split_names, sequence_filter=None):
+    manifest = load_split_manifest(config)
+    selected_splits = ["train", "val", "test"] if "all" in split_names else split_names
+    requested_sequences = set(sequence_filter or [])
+
+    train_annotation_dir = project_path(config["paths"]["raw_train_annotations_dir"])
+    test_annotation_dir = project_path(config["paths"]["raw_test_annotations_dir"])
+    split_to_annotation_dir = {
+        "train": train_annotation_dir,
+        "val": train_annotation_dir,
+        "test": test_annotation_dir,
+    }
+
+    for split_name in selected_splits:
+        annotation_dir = split_to_annotation_dir[split_name]
+        sequence_lookup = {
+            get_sequence_name(path): path for path in list_xml_files(annotation_dir)
+        }
+        processed_sequences = []
+        sequence_names = manifest["splits"].get(split_name, [])
+        if requested_sequences:
+            sequence_names = [
+                name for name in sequence_names if name in requested_sequences
+            ]
+
+        print(f"\n=== CONVERT TRACKEVAL {split_name.upper()} ({len(sequence_names)} SEQS) ===")
+        for sequence_name in sequence_names:
+            xml_path = sequence_lookup.get(sequence_name)
+            if xml_path is None:
+                print(f"[WARNING] XML not found for sequence: {sequence_name}")
+                continue
+            processed_sequence = process_sequence(xml_path, split_name, config)
+            if processed_sequence:
+                processed_sequences.append(processed_sequence)
+
+        write_seqmap(processed_sequences, split_name, config)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Convert UA-DETRAC annotations to TrackEval MOT format."
+    )
+    add_common_config_args(parser)
+    parser.add_argument(
+        "--split",
+        action="append",
+        choices=["train", "val", "test", "all"],
+        default=None,
+        help="Split to convert. Can be passed multiple times."
+    )
+    parser.add_argument(
+        "--sequence",
+        action="append",
+        default=[],
+        help="Only convert this sequence. Can be passed multiple times."
+    )
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    config = load_config_from_args(args)
+    if config is None:
         return
 
-    seqmap_dir = os.path.join(
-        CONFIG["OUTPUT"],
-        "gt",
-        "seqmaps"
-    )
-
-    os.makedirs(seqmap_dir, exist_ok=True)
-
-    out_path = os.path.join(
-        seqmap_dir,
-        f"{CONFIG['BENCHMARK']}-{split_name}.txt"
-    )
-
-    with open(out_path, "w") as f:
-        f.write("name\n")
-        for n in names:
-            f.write(n + "\n")
-
-    print(f"[OK] Seqmap: Saved to {out_path}")
-
-
-# =========================
-# RUN
-# =========================
-def run():
-    random.seed(CONFIG["RANDOM_SEED"])
-    msg = f"Starting data conversion (Seed: {CONFIG['RANDOM_SEED']})..."
-    print(msg)
-
-    # ---------------------------------------------------------
-    # 1. PROCESS TRAIN & VAL SETS
-    # ---------------------------------------------------------
-    if os.path.exists(CONFIG["RAW_TRAIN_XML"]):
-        train_xmls = [
-            f for f in os.listdir(CONFIG["RAW_TRAIN_XML"])
-            if f.endswith(".xml")
-        ]
-        random.shuffle(train_xmls)
-
-        split_idx = int(len(train_xmls) * CONFIG["TRAIN_VAL_SPLIT"])
-
-        train_seqs = []
-        val_seqs = []
-
-        for i, x in enumerate(train_xmls):
-            split_name = "train" if i < split_idx else "val"
-            if split_name == "train":
-                continue
-
-            xml_full_path = os.path.join(CONFIG["RAW_TRAIN_XML"], x)
-            seq_name = process(xml_full_path, split_name)
-
-            if seq_name:
-                if split_name == "train":
-                    train_seqs.append(seq_name)
-                else:
-                    val_seqs.append(seq_name)
-
-        # write_seqmap(train_seqs, "train")
-        write_seqmap(val_seqs, "val")
-    else:
-        print(f"[WARNING] Directory not found: {CONFIG['RAW_TRAIN_XML']}")
-
-    # ---------------------------------------------------------
-    # 2. PROCESS TEST SET
-    # ---------------------------------------------------------
-    if os.path.exists(CONFIG["RAW_TEST_XML"]):
-        test_xmls = [
-            f for f in os.listdir(CONFIG["RAW_TEST_XML"])
-            if f.endswith(".xml")
-        ]
-        test_seqs = []
-
-        for x in test_xmls:
-            xml_full_path = os.path.join(CONFIG["RAW_TEST_XML"], x)
-            seq_name = process(xml_full_path, "test")
-            if seq_name:
-                test_seqs.append(seq_name)
-
-        write_seqmap(test_seqs, "test")
-    else:
-        print(f"[WARNING] Directory not found: {CONFIG['RAW_TEST_XML']}")
+    try:
+        run(config, args.split or ["val", "test"], args.sequence)
+    except FileNotFoundError as error:
+        print(f"[ERROR] {error}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
-    run()
+    main()
