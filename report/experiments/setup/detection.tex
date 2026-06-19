@@ -1,0 +1,81 @@
+\paragraph{Phát hiện}
+
+\def\TP{\relax\ifmmode\mathrm{TP}\else TP\fi}
+\def\FP{\relax\ifmmode\mathrm{FP}\else FP\fi}
+\def\FN{\relax\ifmmode\mathrm{FN}\else FN\fi}
+
+Để đánh giá chất lượng của mô hình phát hiện đối tượng, các độ đo được sử
+dụng bao gồm Precision, Recall, F1-score, mAP@50 và mAP@50--95. Các độ
+đo này phản ánh khả năng phát hiện, phân loại và định vị đối tượng của
+mô hình trên tập dữ liệu đánh giá.
+
+Precision đánh giá tỷ lệ các đối tượng được mô hình dự đoán là đúng trên
+tổng số các đối tượng được dự đoán. Chỉ số này phản ánh mức độ tin cậy
+của các dự đoán do mô hình tạo ra và được tính như sau:
+\begin{equation}
+\mathrm{Precision}
+= \frac{\TP}{\TP + \FP},
+\end{equation}
+trong đó, \TP\ (True Positives) là số lượng đối tượng được phát hiện
+đúng và \FP\ (False Positives) là số lượng đối tượng được dự đoán nhưng
+không tồn tại trong thực tế.
+
+Recall đánh giá khả năng phát hiện đầy đủ các đối tượng có trong ảnh.
+Chỉ số này được tính bằng tỷ lệ số đối tượng được phát hiện đúng trên
+tổng số đối tượng thực tế:
+\begin{equation}
+\mathrm{Recall}
+= \frac{\TP}{\TP + \FN},
+\end{equation}
+trong đó, \FN\ (False Negatives) là số lượng đối tượng thực tế nhưng bị
+mô hình bỏ sót. Recall cao cho thấy mô hình có khả năng phát hiện được
+phần lớn các đối tượng trong dữ liệu.
+
+F1-score là trung bình điều hòa của Precision và Recall, được sử dụng để
+đánh giá sự cân bằng giữa độ chính xác và khả năng phát hiện của mô
+hình:
+\begin{equation}
+\mathrm{F1}
+= \frac{2 \times \mathrm{Precision} \times \mathrm{Recall}}
+{\mathrm{Precision} + \mathrm{Recall}}.
+\end{equation}
+Giá trị F1-score càng cao cho thấy mô hình đạt được sự cân bằng tốt giữa
+Precision và Recall.
+
+Trong bài toán phát hiện đối tượng, đường cong Precision--Recall (PR)
+được xây dựng bằng cách thay đổi ngưỡng confidence của mô hình. Từ
+đường cong này, diện tích dưới đường cong được sử dụng để tính Average
+Precision (AP):
+\begin{equation}
+  \mathrm{AP} = \int_0^1 P(R)\, dR,
+\end{equation}
+trong đó $P(R)$ là giá trị Precision tương ứng với Recall $R$. AP phản
+ánh đồng thời khả năng phát hiện và phân loại đối tượng của mô hình trên
+một lớp cụ thể.
+
+Đối với bài toán nhiều lớp, chỉ số Mean Average Precision (mAP) được
+tính bằng giá trị trung bình của AP trên tất cả các lớp:
+\begin{equation}
+  \mathrm{mAP} = \frac{1}{N}\sum_{i=1}^{N} \mathrm{AP}_i,
+\end{equation}
+trong đó $N$ là số lớp đối tượng và $AP_i$ là Average Precision của lớp
+thứ $i$.
+
+Chỉ số mAP@50 được tính tại ngưỡng IoU bằng 0.5, nghĩa là một đối tượng
+được xem là phát hiện đúng nếu độ chồng lấp giữa hộp dự đoán và hộp thực
+tế đạt ít nhất 50%. Đây là độ đo được sử dụng phổ biến để đánh giá khả
+năng phát hiện tổng quát của mô hình.
+
+Để đánh giá chặt chẽ hơn chất lượng định vị, chỉ số mAP@50--95 được sử
+dụng. Độ đo này được tính bằng giá trị trung bình của AP tại các ngưỡng
+IoU từ 0.5 đến 0.95 với bước nhảy 0.05:
+
+\begin{equation}
+\mathrm{mAP}@50\text{--}95
+= \frac{1}{10}
+\sum_{\mathrm{IoU}\in{0.50,0.55,\ldots,0.95}}
+\mathrm{AP}_{\mathrm{IoU}}.
+\end{equation}
+
+Do được tính trên nhiều ngưỡng IoU khác nhau, mAP@50--95 phản ánh toàn
+diện hơn khả năng phát hiện và định vị đối tượng của mô hình.
