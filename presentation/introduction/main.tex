@@ -1,0 +1,96 @@
+\section{Giới thiệu}
+
+\begin{frame}
+\frametitle{Bối cảnh}
+\framesubtitle{Giám sát giao thông thông minh}
+
+\begin{itemize}[<+->]
+  \item Đô thị hóa và mật độ phương tiện tăng nhanh gây áp lực lên hệ thống
+        giao thông
+  \item Camera giám sát tạo ra nguồn dữ liệu video phong phú, chi phí thấp và
+        dễ triển khai hơn nhiều cảm biến chuyên dụng
+  \item Phát hiện và đếm phương tiện hỗ trợ giám sát lưu lượng, phát hiện ùn
+        tắc và quy hoạch hạ tầng giao thông
+  \item Học sâu giúp các hệ thống thị giác máy tính đạt độ chính xác cao hơn
+        trong môi trường thực tế
+\end{itemize}
+
+\vspace{0.2cm}
+
+{\scriptsize Nguồn: \cite{YANG2018143,song2019}}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Phát biểu bài toán}
+\framesubtitle{Vehicle Detection and Counting}
+
+\begin{itemize}[<+->]
+  \item Đầu vào: video hoặc chuỗi ảnh từ camera giám sát giao thông cố định
+  \item Phát hiện vị trí phương tiện trong từng khung hình bằng hộp giới hạn
+  \item Theo dõi phương tiện qua các khung hình để duy trì định danh
+  \item Đếm số lượng phương tiện đi qua vùng quan sát xác định trước
+  \item Đầu ra: vị trí, quỹ đạo và số lượng phương tiện trong khoảng thời gian
+        quan sát
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Thách thức}
+\framesubtitle{Môi trường giao thông thực tế}
+
+\begin{itemize}[<+->]
+  \item Điều kiện ánh sáng và thời tiết thay đổi theo thời gian
+  \item Che khuất giữa các phương tiện trong cảnh giao thông đông
+  \item Góc nhìn camera, phối cảnh và kích thước phương tiện không đồng nhất
+  \item Nhiều chủng loại phương tiện làm tăng độ khó cho phát hiện và theo dõi
+  \item Hệ thống cần cân bằng giữa độ chính xác và khả năng xử lý gần thời
+        gian thực
+\end{itemize}
+
+\vspace{0.2cm}
+
+{\scriptsize Nguồn: \cite{YANG2018143,dai2019}}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Các hướng tiếp cận liên quan}
+\framesubtitle{Từ thị giác cổ điển đến học sâu}
+
+\begin{itemize}[<+->]
+  \item Phương pháp cổ điển: chênh lệch khung hình, luồng quang học và trừ nền
+  \item Đặc trưng thủ công như SIFT, HOG, Haar-like kết hợp bộ phân loại SVM
+        hoặc Adaboost
+  \item Mô hình hai giai đoạn như R-CNN và Faster R-CNN ưu tiên độ chính xác
+        nhưng khó đáp ứng thời gian thực
+  \item Mô hình một giai đoạn như YOLO và SSD cân bằng tốt hơn giữa tốc độ và
+        độ chính xác
+\end{itemize}
+
+\vspace{0.2cm}
+
+{\scriptsize Nguồn: \cite{song2019,dai2019,yaseen2024yolov8}}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Hướng giải quyết của đồ án}
+\framesubtitle{Detection-based tracking and counting}
+
+\begin{itemize}[<+->]
+  \item Fine-tune YOLOv8n trên UA-DETRAC để phát hiện phương tiện
+  \item Sử dụng tracker kiểu detection-based để ghép nối phương tiện theo thời
+        gian
+  \item So sánh SORT và BYTE, chọn cấu hình phù hợp cho tracking
+  \item Đếm phương tiện dựa trên quỹ đạo sau tracking và vùng quan sát
+  \item Đánh giá thực nghiệm theo từng thành phần: detection, tracking và
+        counting
+\end{itemize}
+
+\vspace{0.2cm}
+
+{\scriptsize Nguồn dữ liệu: \cite{wen2020uadetrac}}
+
+\end{frame}
