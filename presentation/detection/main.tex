@@ -1,0 +1,83 @@
+\section{Phát hiện phương tiện}
+
+\begin{frame}
+\frametitle{YOLOv8n}
+\framesubtitle{Giới thiệu}
+
+\begin{itemize}[<+->]
+  \item Mô hình phát hiện đối tượng thời gian thực thuộc họ YOLO
+  \item Sử dụng kiến trúc Anchor-free
+  \item Cải tiến Backbone và Neck để trích xuất đặc trưng hiệu quả hơn
+  \item Cân bằng tốt giữa tốc độ và độ chính xác
+  \item Hỗ trợ đa tác vụ
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{YOLOv8n}
+\framesubtitle{Kiến trúc}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.55\textwidth]{yolov8-architecture}
+  \caption{Kiến trúc YOLOv8}
+  \label{fig:yolov8-architecture}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{YOLOv8n}
+\framesubtitle{Quá trình fine-tuning}
+
+\begin{itemize}[<+->]
+  \item GPU: NVIDIA Tesla T4 (Google Colab)
+  \item Bộ dữ liệu: UA-DETRAC
+  \item Tỉ lệ chia dữ liệu: 80\% train--20\% test
+  \item Trọng số khởi tạo YOLOv8n pretrained trên COCO
+  \item Đóng băng 10 lớp đầu tiên
+  \item Epoch: 20
+  \item Batch size: 64
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{YOLOv8n}
+\framesubtitle{Kết quả huấn luyện}
+
+\begin{itemize}[<+->]
+  \item Các hàm mất mát giảm dần theo số epoch
+  \item Precision, Recall và mAP tăng dần và ổn định
+  \item Hiệu năng tốt đối với lớp xe hơi và xe buýt
+  \item Khó khăn hơn với lớp xe tải nhỏ và lớp khác
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{YOLOv8n}
+\framesubtitle{Kết quả trên tập kiểm tra}
+
+\begin{table}
+  \centering
+  \begin{tblr}{
+    colspec = {l l},
+    hlines,
+  }
+    Chỉ số & Giá trị \\
+    Precision & 0.7352 \\
+    Recall & 0.5488 \\
+    mAP@50 & 0.5003 \\
+    mAP@50--95 & 0.3566 \\
+  \end{tblr}
+\end{table}
+
+\vspace{0.3cm}
+
+\begin{itemize}
+\item Mô hình đạt khả năng phát hiện phương tiện tương đối tốt
+\item Đáp ứng yêu cầu làm đầu vào cho hệ thống theo dõi đa đối tượng
+\end{itemize}
+
+\end{frame}
