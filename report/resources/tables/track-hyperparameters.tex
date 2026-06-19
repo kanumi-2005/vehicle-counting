@@ -1,0 +1,21 @@
+\begin{tblr}{
+  colspec = {Q[m,l] Q[m, l] Q[2in,l,h]},
+  vlines,
+  hlines,
+  cell{2-Z}{1} = {font=\ttfamily}
+}
+  Tên tham số & Giá trị & Mô tả \\
+  confidence\_threshold & $0.2$ & Ngưỡng độ tin cậy của bộ phát hiện trước
+  khi liên kết dữ liệu \\
+  high\_conf\_det\_threshold & $0.494$ & Ngưỡng độ tin cậy để phát hiện thành
+  phần cao và thấp \\
+  track\_activation\_threshold & $0.494$ & Ngưỡng độ tin cậy để tạo thành vết
+  theo dõi mới \\
+  minimum\_iou\_threshold & $0.1$ & Ngưỡng trong quá trình liên kết dữ liệu
+  bằng độ đo tương đồng IoU \\
+  lost\_track\_buffer & $75$ & Số lượng khung hình nhớ một ID khi bị mất dấu
+  \\
+  frame\_rate & $25$ & Tốc độ khung hình \\
+  minimum\_consecutive\_frames & $2$ & Số lượng khung hình xuất hiện để được
+  cấp ID \\
+\end{tblr}

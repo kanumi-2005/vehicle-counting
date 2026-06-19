@@ -18,3 +18,41 @@ Các tham số huấn luyện được thiết lập như sau:
   \item Trọng số khởi tạo: YOLOv8n được tiền huấn luyện trên tập dữ liệu COCO.
   \item Số lớp được đóng băng: 10 lớp đầu tiên.
 \end{itemize}
+
+\subsubsection{Tham số cho bộ theo dõi}
+
+Hai thuật toán theo dõi được sử dụng trong nghiên cứu này là SORT (đóng vai trò
+đường cơ sở) và ByteTrack. Các tham số của SORT (ngoại trừ
+\texttt{high\_conf\_det\_threshold}) và BYTE được trình bày trong
+\tablename~\ref{tab:track-hyperparameters}. Để đảm bảo tính công bằng trong so
+sánh, các tham số tương ứng của hai thuật toán được thiết lập ở mức tương đương
+khi có thể. Việc chuẩn hóa cấu hình này nhằm hạn chế ảnh hưởng của quá trình
+tinh chỉnh tham số đến kết quả thực nghiệm, từ đó phản ánh rõ hơn sự khác biệt
+xuất phát từ cơ chế liên kết đối tượng của từng thuật toán. Kỳ vọng là
+BYTE sẽ đạt hiệu năng theo dõi tốt hơn nhờ khả năng khai thác cả các phát
+hiện có độ tin cậy thấp trong quá trình liên kết, trong khi SORT chỉ sử dụng
+các phát hiện vượt qua ngưỡng tin cậy đã định.
+
+Tham số \texttt{confidence\_threshold} để loại bỏ các phát hiện cực kì thấp để
+giảm số lượng tính toán nhưng vẫn giữ độ hiệu quả. Giá trị $0.2$ được tham khảo
+từ \figurename~\ref{fig:p-curve} và \figurename~\ref{fig:r-curve} khi Recall
+lớn (khoảng $0.8$) trong khi độ chuẩn xác ở các lớp ở mức ổn (gần $0.5$). Tham
+số \texttt{high\_conf\_det\_threshold} ngưỡng tin cậy cao có giá trị là $0.494$
+được tham khảo từ \figurename~\ref{fig:f1-curve} khi điểm F1 đạt cực đại cho
+thấy sự cân bằng tốt giữa chuẩn xác và bỏ sót. Tham số
+\texttt{track\_activation\_threshold} được lựa chọn bằng với
+\texttt{high\_conf\_det\_threshold} theo đúng thuật toán BYTE. Tham số
+\texttt{lost\_track\_buffer} là $75$ (tương ứng là 3 giây) để thuật toán tránh
+quên đi các ID cũ khi phương tiện bị che khuất hay chồng lấp.Tham
+số\texttt{minimum\_consecutive\_frames} được chọn là 2 để tránh nhiễu lúc phát
+hiện. Tham số \texttt{minimum\_iou\_threshold} là ngưỡng để các hộp phát hiện
+được liên kết với vết theo dõi qua dự đoán của Kalman Filter. Tham số được chọn
+với giá trị nhỏ $0.1$ để ổn định với các phương tiện di chuyển nhanh (như trên
+cao tốc) hay di chuyển sát camera.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Các siêu tham số cho thuật toán SORT và BYTE}
+  \label{tab:track-hyperparameters}
+  \import{\tablespath}{track-hyperparameters}
+\end{table}

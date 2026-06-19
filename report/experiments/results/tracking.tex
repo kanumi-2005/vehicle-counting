@@ -1,0 +1,71 @@
+\subsubsection{Kết quả chọn bộ theo dõi}
+
+Bảng~\ref{tab:tracking-comparison} trình bày kết quả đánh giá hai thuật toán
+theo dõi trên tập xác thực. BYTE đạt kết quả cao hơn SORT trên tất cả các
+độ đo chính, đặc biệt ở AssA và IDF1, cho thấy khả năng duy trì danh tính đối
+tượng tốt hơn trong quá trình theo dõi. Do đó, BYTE được lựa chọn cho các
+thí nghiệm đánh giá trên tập kiểm tra ở các phần tiếp theo.
+
+\begin{table}[htbp]
+  \centering
+  \caption{So sánh kết quả theo dõi của SORT và BYTE trên tập xác thực}
+  \label{tab:tracking-comparison}
+  \begin{tblr}
+  {
+    colspec = {lcc},
+    vline{2,3}, hline{2},
+  }
+  Độ đo & YOLO + SORT & YOLO + BYTE \\
+  \HOTA   & 68.455 & 69.633 \\
+  \DetA   & 66.955 & 67.588 \\
+  \AssA   & 70.343 & 72.072 \\
+  LocA   & 87.653 & 87.669 \\
+  \MOTA   & 73.978 & 75.607 \\
+  \MOTP   & 86.294 & 86.311 \\
+  \IDFone & 79.419 & 81.483 \\
+  \end{tblr}
+\end{table}
+
+\subsubsection{Kết quả theo dõi trên tập kiểm tra}
+
+Sau khi lựa chọn BYTE trên tập xác thực, cấu hình này được sử dụng để đánh giá
+trên tập kiểm tra. Kết quả trong \tablename~\ref{tab:track-test-result} cho
+thấy hệ thống đạt \HOTA\ bằng $60.716$ và \IDFone\ bằng $70.345$. Giá trị
+\AssA\ đạt $62.800$ cho thấy khả năng duy trì danh tính đối tượng tương đối ổn
+định, trong khi \DetA\ đạt $59.184$ phản ánh chất lượng phát hiện của mô hình
+YOLO vẫn là yếu tố ảnh hưởng đáng kể đến hiệu năng theo dõi tổng thể. Ngoài ra,
+các thông số về độ chuẩn xác định vị \MOTP\ ($84.339$) và LocA ($85.953$) cho
+thấy các hộp bao được gán khá chuẩn xác với phương tiện.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Kết quả đánh giá quá trình theo dõi trên tập kiểm tra}
+  \label{tab:track-test-result}
+  \import{\tablespath}{track-test-result}
+\end{table}
+
+\figurename~\ref{fig:hota} cho thấy các độ đo \HOTA, \DetA\ và \AssA\ có xu
+hướng giảm khi giá trị ngưỡng $\alpha$ tăng. Trong khoảng từ $\alpha=0.0$ đến
+$\alpha=0.7$, mức suy giảm của các độ đo tương đối nhỏ, cho thấy hệ thống vẫn
+duy trì được hiệu năng phát hiện và liên kết đối tượng ổn định ở các ngưỡng
+đánh giá trung bình. Tuy nhiên, từ $\alpha \approx 0.7$ trở đi, tốc độ suy giảm
+trở nên rõ rệt hơn, đặc biệt đối với \DetA.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{hota}
+  \caption{Kết quả đánh giá theo dõi bằng độ đo \HOTA}
+  \label{fig:hota}
+\end{figure}
+
+So với \AssA, \DetA\ giảm nhanh hơn khi $\alpha$ tăng, cho thấy hiệu năng của
+hệ thống bị ảnh hưởng nhiều hơn bởi chất lượng phát hiện đối tượng so với khả
+năng duy trì danh tính. Nói cách khác, khi tiêu chuẩn đánh giá ngày càng nghiêm
+ngặt, các sai lệch về vị trí hoặc kích thước hộp giới hạn trở thành nguyên nhân
+chính làm giảm hiệu năng tổng thể.
+
+Trong khi đó, LocA tăng dần theo $\alpha$ và đạt giá trị cao nhất ở vùng
+$\alpha > 0.8$. Điều này cho thấy các đối tượng vẫn được xem là khớp ở các
+ngưỡng cao thường có độ chính xác định vị tốt hơn. Do \HOTA\ được xác định từ
+cả \DetA\ và \AssA, xu hướng giảm của \HOTA\ chủ yếu bị chi phối bởi sự suy
+giảm của \DetA\ ở các giá trị $\alpha$ lớn.
