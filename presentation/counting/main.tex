@@ -1,0 +1,113 @@
+\section{Đếm phương tiện}
+
+\begin{frame}
+\frametitle{Bài toán đếm phương tiện}
+\framesubtitle{Từ quỹ đạo theo dõi đến thống kê lưu lượng}
+
+\begin{itemize}[<+->]
+  \item Đầu vào là các vết theo dõi đã có ID ổn định từ giai đoạn tracking
+  \item Mỗi phương tiện được biểu diễn bởi hộp giới hạn, ID và lớp phương tiện
+  \item Hệ thống kiểm tra vị trí đại diện của phương tiện với vùng đếm đã cấu
+        hình
+  \item Mỗi ID chỉ được cộng một lần trong từng vùng đếm để tránh đếm trùng
+  \item Kết quả gồm số lượng hiện thời, tổng tích lũy và thống kê theo lớp
+\end{itemize}
+
+\vspace{0.2cm}
+
+{\scriptsize Cách tiếp cận dựa trên quỹ đạo phù hợp với hướng
+detection-based counting \cite{dai2019,shokri2025}.}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Vùng đếm}
+\framesubtitle{ROI dạng đa giác}
+
+\begin{itemize}[<+->]
+  \item Người dùng tạo một hoặc nhiều vùng quan tâm (ROI) trực tiếp trên khung
+        hình video
+  \item ROI được biểu diễn bằng đa giác để phù hợp với phối cảnh camera giao
+        thông
+  \item Điểm đại diện của phương tiện được chọn tại tâm đáy hộp giới hạn
+  \item Nếu điểm đại diện nằm trong ROI, phương tiện được xem là đang thuộc
+        vùng đó
+  \item Cho phép sửa vị trí đỉnh ROI và xóa ROI để hiệu chỉnh theo từng video
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Thuật toán đếm}
+\framesubtitle{Counting by tracked IDs}
+
+\begin{enumerate}
+  \item Nhận danh sách track hợp lệ ở khung hình hiện tại
+  \item Với mỗi track, lấy ID, lớp phương tiện và hộp giới hạn
+  \item Tính điểm đại diện tại tâm đáy hộp giới hạn
+  \item Kiểm tra điểm đại diện có nằm trong ROI nào hay không
+  \item Nếu nằm trong ROI, tăng bộ đếm live và bộ đếm theo lớp
+  \item Nếu ID chưa từng được đếm trong ROI đó, tăng tổng tích lũy
+\end{enumerate}
+
+\vspace{0.25cm}
+
+\begin{block}{Nguyên tắc chống đếm trùng}
+  Mỗi ROI lưu tập ID đã được ghi nhận. Một phương tiện chỉ làm tăng tổng tích
+  lũy lần đầu tiên khi ID của nó xuất hiện trong ROI.
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Công cụ minh họa}
+\framesubtitle{Interactive tracking counter}
+
+\begin{itemize}[<+->]
+  \item Xây dựng script chạy độc lập từ dòng lệnh:
+        \texttt{src/run\_tracking\_counter.py}
+  \item Hỗ trợ cấu hình riêng qua \texttt{.apprc} và vẫn dùng cấu hình dữ liệu
+        chung của hệ thống
+  \item Cho phép chọn tracker, thiết bị chạy, ngưỡng phát hiện và đường dẫn
+        video từ CLI
+  \item Hỗ trợ tạo, chọn, sửa và xóa ROI trong cửa sổ hiển thị
+  \item Có thể lưu video kết quả bằng \texttt{--save-output} hoặc
+        \texttt{--output}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Bảng theo dõi và đếm}
+\framesubtitle{Thông tin hiển thị khi chạy}
+
+\begin{itemize}[<+->]
+  \item Hiển thị FPS và tổng số ID duy nhất đã được ghi nhận
+  \item Với mỗi ROI, hiển thị số lượng phương tiện đang nằm trong vùng và tổng
+        số đã đếm
+  \item Thống kê nhanh số lượng theo lớp phương tiện như car, bus, van hoặc
+        others
+  \item Hộp giới hạn hiển thị ID, lớp phương tiện và hướng di chuyển lên/xuống
+  \item Có thể bật/tắt bảng điều khiển và bảng counting bằng phím tắt trong
+        quá trình chạy
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Nhận xét}
+\framesubtitle{Ưu điểm và hạn chế}
+
+\begin{itemize}[<+->]
+  \item Cách đếm đơn giản, trực quan và dễ áp dụng cho các camera cố định
+  \item Việc dùng ID theo dõi giúp hạn chế đếm trùng khi phương tiện xuất hiện
+        nhiều khung hình liên tiếp
+  \item ROI dạng đa giác linh hoạt hơn đường đếm cố định trong các góc nhìn
+        phối cảnh
+  \item Kết quả đếm phụ thuộc mạnh vào chất lượng phát hiện và độ ổn định ID
+        của tracker
+  \item Cần đánh giá định lượng sâu hơn trên các kịch bản đếm thực tế và các
+        vùng đếm được gán nhãn chuẩn
+\end{itemize}
+
+\end{frame}

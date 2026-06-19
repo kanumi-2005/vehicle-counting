@@ -1,0 +1,91 @@
+\section{Kết luận}
+
+\begin{frame}
+\frametitle{Tổng kết phương pháp}
+\framesubtitle{Vehicle detection, tracking and counting}
+
+\begin{itemize}[<+->]
+  \item Đề xuất chuỗi xử lý gồm ba giai đoạn: phát hiện, theo dõi và đếm
+        phương tiện
+  \item Sử dụng YOLOv8n làm bộ phát hiện phương tiện trong từng khung hình
+  \item Sử dụng BYTE để duy trì định danh phương tiện qua thời gian
+  \item Đếm phương tiện dựa trên ID theo dõi và ROI do người dùng cấu hình
+  \item Xây dựng pipeline và công cụ minh họa có thể chạy từ dòng lệnh
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Kết quả thực nghiệm}
+\framesubtitle{Detection và tracking}
+
+\begin{itemize}[<+->]
+  \item YOLOv8n sau fine-tuning hội tụ ổn định trên UA-DETRAC
+  \item Kết quả detection trên tập kiểm tra đạt Precision $0.7352$,
+        Recall $0.5488$ và mAP@50 $0.5003$
+  \item BYTE cao hơn SORT trên tập xác thực ở các độ đo chính như HOTA, MOTA
+        và IDF1
+  \item YOLOv8n + BYTE trên tập kiểm tra đạt HOTA $60.716$, MOTA $64.676$ và
+        IDF1 $70.345$
+  \item Các kết quả cho thấy hướng tracking-by-detection là khả thi cho video
+        giao thông
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Những điều chứng minh được}
+\framesubtitle{Ý nghĩa của kết quả}
+
+\begin{itemize}[<+->]
+  \item YOLOv8n học được đặc trưng phương tiện trên dữ liệu giao thông thực tế
+  \item BYTE giúp duy trì ID tốt hơn SORT nhờ tận dụng cả phát hiện có độ tin
+        cậy thấp
+  \item Chất lượng tracking phụ thuộc mạnh vào chất lượng hộp phát hiện từ
+        detector
+  \item Phân tích HOTA cho thấy DetA giảm nhanh khi ngưỡng đánh giá nghiêm
+        ngặt hơn
+  \item Cải thiện detector là hướng quan trọng để nâng hiệu năng toàn hệ thống
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Ưu điểm và hạn chế}
+\framesubtitle{Đánh giá phương pháp}
+
+\begin{table}
+  \centering
+  \begin{tblr}{
+    colspec = {X[1,l] X[1,l]},
+    vline{2}, hline{2},
+  }
+    Ưu điểm & Hạn chế \\
+    Cấu trúc đơn giản, dễ triển khai &
+    Phụ thuộc vào chất lượng detection \\
+    YOLOv8n nhỏ, tốc độ suy luận tốt &
+    Hiệu năng chưa đều giữa các lớp \\
+    BYTE giảm mất dấu và giữ ID tốt hơn SORT &
+    Đối tượng nhỏ hoặc che khuất vẫn khó xử lý \\
+    Dễ thay detector hoặc tracker &
+    Counting cần đánh giá định lượng sâu hơn \\
+  \end{tblr}
+\end{table}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Hướng phát triển}
+\framesubtitle{Các cải tiến tiếp theo}
+
+\begin{itemize}[<+->]
+  \item Xử lý mất cân bằng dữ liệu bằng tăng cường dữ liệu hoặc lấy mẫu lại
+  \item Thử nghiệm các biến thể YOLO lớn hơn hoặc tối ưu suy luận tốt hơn
+  \item Bổ sung đặc trưng ngoại quan để giảm nhầm lẫn ID khi che khuất
+  \item Đánh giá trực tiếp độ chính xác counting trên các ROI hoặc đường đếm
+        có nhãn chuẩn
+  \item Mở rộng hệ thống cho nhiều góc camera và các kịch bản giao thông phức
+        tạp hơn
+\end{itemize}
+
+\end{frame}
