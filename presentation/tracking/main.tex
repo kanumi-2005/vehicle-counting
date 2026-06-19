@@ -1,0 +1,150 @@
+\section{Theo dõi phương tiện}
+
+\begin{frame}
+\frametitle{BYTE}
+\framesubtitle{Tổng quan}
+
+\begin{itemize}[<+->]
+  \item Thuật toán theo dõi đa đối tượng theo hướng tracking-by-detection
+  \item Nhận đầu vào là các hộp phát hiện từ YOLOv8n ở từng khung hình
+  \item Duy trì định danh phương tiện bằng Kalman Filter và Hungarian matching
+  \item Khác SORT ở việc tận dụng cả các phát hiện có độ tin cậy thấp
+  \item Phù hợp với bối cảnh giao thông có che khuất và phương tiện nhỏ
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{BYTE}
+\framesubtitle{Cơ chế liên kết dữ liệu}
+
+\begin{itemize}[<+->]
+  \item Chia các phát hiện thành hai nhóm: độ tin cậy cao và độ tin cậy thấp
+  \item Liên kết các phát hiện độ tin cậy cao với các vết theo dõi hiện có
+  \item Dùng các phát hiện độ tin cậy thấp để khôi phục các vết chưa được gán
+  \item Tạo vết theo dõi mới từ các phát hiện độ tin cậy cao còn lại
+  \item Giảm mất dấu và hạn chế thay đổi ID khi phương tiện bị che khuất
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{BYTE}
+\framesubtitle{Minh họa cơ chế liên kết}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.88\textwidth]{byte-visualization}
+  \caption{Minh họa quá trình liên kết dữ liệu của BYTE}
+\end{figure}
+
+\vspace{-0.2cm}
+{\scriptsize Nguồn:
+\href{https://datature.io/blog/introduction-to-bytetrack-multi-object-tracking-by-associating-every-detection-box}
+{Datature blog}}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Thiết lập theo dõi}
+\framesubtitle{Cấu hình thực nghiệm}
+
+\begin{table}
+  \centering
+  \begin{tblr}{
+    colspec = {l l},
+    vline{2}, hline{2},
+  }
+    Tham số & Giá trị \\
+    Detector confidence & 0.2 \\
+    High confidence & 0.6 \\
+    Track activation & 0.6 \\
+    Lost track buffer & 75 \\
+    Minimum consecutive frames & 2 \\
+    Minimum IoU threshold & 0.1 \\
+    Frame rate & 25 \\
+  \end{tblr}
+\end{table}
+
+\vspace{0.2cm}
+
+\begin{itemize}
+  \item SORT và BYTE được thiết lập tương đương để so sánh công bằng
+  \item BYTE có thêm ngưỡng high confidence cho bước liên kết thứ hai
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Lựa chọn bộ theo dõi}
+\framesubtitle{So sánh SORT và BYTE trên tập xác thực}
+
+\begin{table}
+  \centering
+  \begin{tblr}{
+    colspec = {l c c},
+    vline{2,3}, hline{2},
+  }
+    Độ đo & YOLO + SORT & YOLO + BYTE \\
+    HOTA & 68.455 & 69.633 \\
+    DetA & 66.955 & 67.588 \\
+    AssA & 70.343 & 72.072 \\
+    LocA & 87.653 & 87.669 \\
+    MOTA & 73.978 & 75.607 \\
+    MOTP & 86.294 & 86.311 \\
+    IDF1 & 79.419 & 81.483 \\
+  \end{tblr}
+\end{table}
+
+\vspace{0.2cm}
+
+\begin{itemize}
+  \item BYTE cao hơn SORT trên tất cả các độ đo chính
+  \item Cải thiện rõ ở AssA và IDF1, cho thấy khả năng giữ ID tốt hơn
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Kết quả theo dõi}
+\framesubtitle{Đánh giá YOLOv8n + BYTE trên tập kiểm tra}
+
+\begin{table}
+  \centering
+  \begin{tblr}{
+    colspec = {l l},
+    vline{2}, hline{2},
+  }
+    Độ đo & Giá trị \\
+    HOTA & 60.716 \\
+    DetA & 59.184 \\
+    AssA & 62.800 \\
+    LocA & 85.953 \\
+    MOTA & 64.676 \\
+    MOTP & 84.334 \\
+    IDF1 & 70.345 \\
+  \end{tblr}
+\end{table}
+
+\vspace{0.2cm}
+
+\begin{itemize}
+  \item AssA và IDF1 cho thấy khả năng duy trì danh tính tương đối ổn định
+  \item DetA thấp hơn AssA, cho thấy chất lượng phát hiện vẫn là yếu tố giới hạn
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Nhận xét}
+\framesubtitle{Ưu điểm và hạn chế}
+
+\begin{itemize}[<+->]
+  \item YOLOv8n + BYTE là hướng tiếp cận khả thi cho theo dõi phương tiện
+  \item BYTE tận dụng phát hiện độ tin cậy thấp để giảm mất dấu trong video
+  \item Hệ thống đơn giản, dễ thay thế detector hoặc tracker khi cần
+  \item Hiệu năng vẫn phụ thuộc mạnh vào chất lượng hộp phát hiện từ YOLO
+  \item Đối tượng nhỏ, che khuất hoặc định vị chưa chính xác làm giảm DetA và HOTA
+\end{itemize}
+
+\end{frame}
