@@ -2,12 +2,12 @@ import cv2
 import time
 import argparse
 import numpy as np
+import os
 from typing import Dict, Set, List, Tuple, Optional
 from collections import defaultdict, deque
 
 # LƯU Ý: Đảm bảo các file/module này nằm cùng thư mục với script này
 from tracking_pipeline import TrackingPipeline
-# from lane_detector import LaneDetector # (Mở comment nếu bạn có dùng)
 
 class TrafficSystem:
     def __init__(self, video_path: str, model_path: str, width: int = 1280, height: int = 720):
@@ -24,7 +24,24 @@ class TrafficSystem:
         if not self.cap.isOpened():
             raise ValueError(f"Không thể mở hoặc tìm thấy video tại: {video_path}")
             
-        self.pipeline = TrackingPipeline(model_path)
+        # ==========================================
+        # SETUP VIDEO WRITER (THÊM MỚI Ở ĐÂY)
+        # ==========================================
+        os.makedirs("demo", exist_ok=True)
+        output_path = os.path.join("demo", "output.mp4")
+        
+        # Lấy FPS gốc của video để video xuất ra mượt mà tương đương
+        original_fps = self.cap.get(cv2.CAP_PROP_FPS)
+        if original_fps == 0 or np.isnan(original_fps):
+            original_fps = 30.0 # Đặt mặc định nếu không đọc được
+            
+        # Định dạng codec (dùng mp4v cho đuôi .mp4)
+        fourcc = cv2.VideoWriter_fourcc(*'avc1')
+        self.out = cv2.VideoWriter(output_path, fourcc, original_fps, (self.WIDTH, self.HEIGHT))
+        print(f"[INFO] Video kết quả sẽ được lưu tại: {output_path}")
+        # ==========================================
+
+        self.pipeline = TrackingPipeline(model_path, confidence_threshold=0.3, device="auto", verbose=False, tracker_type="byte", lost_track_buffer=30, frame_rate=30, track_activation_threshold=0.25, minimum_consecutive_frames=3, minimum_iou_threshold=0.1, high_conf_detection_threshold=0.3)
         
         # Thống kê
         self.total_cumulative_count: int = 0  # Tổng số xe từ trước đến nay
@@ -89,10 +106,47 @@ class TrafficSystem:
                     cv2.circle(setup_frame, pt, 4, (0, 0, 255), -1)
 
             # Chỉ dẫn
-            cv2.putText(setup_frame, f"Da ve xong: {len(self.lane_polygons)} Lan | Dinh hien tai: {len(self.current_poly)}", 
-                        (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (0, 255, 255), 2)
-            cv2.putText(setup_frame, "Bam 'N' de CHOT LAN hien tai | Bam ENTER de BAT DAU CHAY", 
-                        (20, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255, 255, 255), 1)
+            # =========================================================================
+            # CẢI TIẾN: VẼ HỘP NỀN HUD ĐỂ CHỮ KHÔNG BỊ CHÌM VÀO VIDEO
+            # =========================================================================
+            text_overlay = setup_frame.copy()
+            # Tạo một hình chữ nhật tối màu làm nền ở góc trái trên
+            cv2.rectangle(text_overlay, (15, 15), (650, 155), (20, 24, 33), -1)
+            # Vẽ viền mỏng màu vàng chanh cho hộp hướng dẫn thêm chuyên nghiệp
+            cv2.rectangle(text_overlay, (15, 15), (650, 155), (0, 255, 255), 1)
+            # Trộn nền tối vào frame gốc (độ đậm 75%)
+            cv2.addWeighted(text_overlay, 0.75, setup_frame, 0.25, 0, setup_frame)
+
+            # DÒNG 1: TRẠNG THÁI HỆ THỐNG (Chữ màu Vàng)
+            status_txt = f"STATUS: Da ve {len(self.lane_polygons)} Lan | Dinh cua lan hien tai: {len(self.current_poly)}"
+            cv2.putText(setup_frame, status_txt, (30, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 255), 2, cv2.LINE_AA)
+
+            # DÒNG 2: HƯỚNG DẪN THAO TÁC CHUỘT (Chữ màu Trắng)
+            cv2.putText(setup_frame, "[CHUOT TRAI] : Click lien tiep de tao cac dinh cua da giac", 
+                        (30, 65), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (240, 240, 240), 1, cv2.LINE_AA)
+
+            # DÒNG 3: PHÍM CHỐT & CHẠY (Chữ màu Xanh Lá)
+            cv2.putText(setup_frame, "[PHIM 'N']   : CHOT lan hien tai | [ENTER]: HOAN THANH & CHAY AI", 
+                        (30, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 0), 1, cv2.LINE_AA)
+
+            # DÒNG 4: PHÍM RESET & THOÁT (Chữ màu Cam)
+            cv2.putText(setup_frame, "[PHIM 'R']   : XOA lan ve do (hoac xoa het) | [ESC]: THOAT", 
+                        (30, 115), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 165, 255), 1, cv2.LINE_AA)
+            
+            # DÒNG 5: THÔNG BÁO ĐỘNG NHẮC NHỞ NGƯỜI DÙNG (Chữ đổi màu theo ngữ cảnh)
+            if len(self.current_poly) > 0 and len(self.current_poly) < 3:
+                # Nhắc nhở khi đang vẽ nhưng chưa đủ 3 góc
+                cv2.putText(setup_frame, "(!) CAN IT NHAT 3 DINH DE CO THE CHOT LAN DUONG", 
+                            (30, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (0, 0, 255), 1, cv2.LINE_AA)
+            elif len(self.lane_polygons) == 0:
+                # Nhắc nhở nếu chưa vẽ làn nào mà đã đòi chạy
+                cv2.putText(setup_frame, "(!) BAN CHUA CO LAN DUONG NAO. HAY VE IT NHAT 1 LAN", 
+                            (30, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (0, 69, 255), 1, cv2.LINE_AA)
+            else:
+                # Thông báo sẵn sàng
+                cv2.putText(setup_frame, "(o) HE THONG DA SAN SANG. AN ENTER DE BAT DAU KICH HOAT AI", 
+                            (30, 140), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (0, 255, 0), 1, cv2.LINE_AA)
+            # =========================================================================s
 
             cv2.imshow(window_name, setup_frame)
             key = cv2.waitKey(1) & 0xFF
@@ -235,6 +289,8 @@ class TrafficSystem:
             # Render HUD Dashboard
             self._render_hud_roi(frame, fps, total_live_count, live_stats)
             
+            self.out.write(frame)
+            
             cv2.imshow("AI Traffic System (Polygon Regions Flow)", frame)
             if cv2.waitKey(1) & 0xFF == 27: # ESC
                 break
@@ -286,12 +342,18 @@ class TrafficSystem:
     def _safely_release(self) -> None:
         if self.cap.isOpened():
             self.cap.release()
+            
+        # Giải phóng stream ghi video (THÊM MỚI Ở ĐÂY)
+        if hasattr(self, 'out') and self.out.isOpened():
+            self.out.release()
+            
         cv2.destroyAllWindows()
         print("[INFO] Da dong luong Stream va giai phong bo nho.")
+        print("[INFO] File video da duoc luu tai thu muc 'demo/'")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="He thong AI giam sat giao thong dang da giac ROI & Trajectory")
-    parser.add_argument("--video", type=str, default="videos/demo1.mp4", help="Duong dan file video")
+    parser.add_argument("--video", type=str, default="video/demo3.mp4", help="Duong dan file video")
     parser.add_argument("--model", type=str, default="models/best.pt", help="Duong dan AI model")
     args = parser.parse_args()
     
