@@ -89,12 +89,26 @@ def write_gt(frames, output_path):
             file_out.write("\n")
 
 
-def get_sequence_length(frames):
-    frame_ids = [safe_int(frame.attrib.get("num")) for frame in frames]
-    return max(frame_ids) if frame_ids else 0
+def get_preprocessed_sequence_length(sequence_name, config):
+    preprocessed_images_dir = project_path(config["paths"]["preprocessed_images_dir"])
+    sequence_image_dir = preprocessed_images_dir / sequence_name
+    if not sequence_image_dir.exists():
+        raise FileNotFoundError(
+            f"Preprocessed image directory not found: {sequence_image_dir}. "
+            "Run src/preprocessing.py first."
+        )
+
+    sequence_length = len(list(sequence_image_dir.glob("img*.jpg")))
+    if sequence_length == 0:
+        raise FileNotFoundError(
+            f"No preprocessed images found in: {sequence_image_dir}. "
+            "Run src/preprocessing.py first."
+        )
+
+    return sequence_length
 
 
-def write_seqinfo(sequence_dir, sequence_name, frames, config):
+def write_seqinfo(sequence_dir, sequence_name, sequence_length, config):
     sequence_dir.mkdir(parents=True, exist_ok=True)
     dataset_config = config["dataset"]
     content = (
@@ -102,7 +116,7 @@ def write_seqinfo(sequence_dir, sequence_name, frames, config):
         f"name={sequence_name}\n"
         "imDir=img1\n"
         f"frameRate={dataset_config['frame_rate']}\n"
-        f"seqLength={get_sequence_length(frames)}\n"
+        f"seqLength={sequence_length}\n"
         f"imWidth={dataset_config['image_width']}\n"
         f"imHeight={dataset_config['image_height']}\n"
         f"imExt={dataset_config['image_ext']}\n"
@@ -124,10 +138,14 @@ def process_sequence(xml_path, split_name, config):
     trackeval_data_dir = project_path(config["paths"]["trackeval_data_dir"])
     benchmark_name = config["dataset"]["benchmark_name"]
     sequence_dir = trackeval_data_dir / "gt" / f"{benchmark_name}-{split_name}" / sequence_name
+    sequence_length = get_preprocessed_sequence_length(sequence_name, config)
 
     write_gt(frames, sequence_dir / "gt" / "gt.txt")
-    write_seqinfo(sequence_dir, sequence_name, frames, config)
-    print(f"[OK] TrackEval {split_name}: {sequence_name} ({len(frames)} frames)")
+    write_seqinfo(sequence_dir, sequence_name, sequence_length, config)
+    print(
+        f"[OK] TrackEval {split_name}: {sequence_name} "
+        f"(seqLength={sequence_length}, annotated_frames={len(frames)})"
+    )
     return sequence_name
 
 
