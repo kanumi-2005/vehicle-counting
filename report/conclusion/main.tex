@@ -1,0 +1,64 @@
+\section{Kết luận}
+
+Đồ án đã nghiên cứu bài toán phát hiện, theo dõi và đếm phương tiện từ dữ liệu
+video giao thông, trong đó trọng tâm là xây dựng một chuỗi xử lý dựa trên học
+sâu để xác định vị trí phương tiện trong từng khung hình và duy trì định danh
+của chúng qua thời gian. Phương pháp được đề xuất sử dụng YOLOv8n làm bộ phát
+hiện phương tiện và kết hợp với thuật toán theo dõi BYTE để liên kết các phát
+hiện giữa các khung hình. Cách tiếp cận này tận dụng ưu điểm của YOLOv8n về tốc
+độ và kích thước mô hình nhỏ, đồng thời khai thác khả năng của BYTE trong việc
+sử dụng cả các phát hiện có độ tin cậy thấp nhằm hạn chế mất dấu đối tượng.
+
+Về mặt thực nghiệm, mô hình YOLOv8n sau khi được fine-tune trên tập dữ liệu
+UA-DETRAC cho thấy khả năng hội tụ ổn định. Các hàm mất mát trên tập huấn
+luyện và tập xác thực đều giảm dần, trong khi các chỉ số Precision, Recall và
+mAP có xu hướng cải thiện trong quá trình huấn luyện. Kết quả đánh giá phát
+hiện cho thấy mô hình hoạt động tốt đối với các lớp có nhiều mẫu như xe hơi và
+xe buýt, nhưng còn hạn chế đối với các lớp có ít dữ liệu hơn như xe tải nhỏ và
+lớp khác. Điều này chứng minh rằng mô hình đã học được các đặc trưng hữu ích
+của phương tiện trong dữ liệu giao thông, đồng thời cũng cho thấy sự mất cân
+bằng dữ liệu vẫn là một yếu tố ảnh hưởng đáng kể đến hiệu năng phát hiện.
+
+Đối với bài toán theo dõi, đồ án đã so sánh hai thuật toán SORT và BYTE trên
+tập xác thực. Kết quả cho thấy BYTE đạt hiệu năng cao hơn SORT trên tất cả các
+độ đo chính, bao gồm \HOTA, \MOTA\ và \IDFone. Đặc biệt, BYTE đạt \AssA\ và
+\IDFone\ cao hơn, cho thấy khả năng duy trì danh tính đối tượng tốt hơn trong
+quá trình theo dõi. Trên tập kiểm tra, hệ thống YOLOv8n kết hợp BYTE đạt
+\HOTA\ bằng $60.716$, \DetA\ bằng $59.184$, \AssA\ bằng $62.800$, \MOTA\ bằng
+$64.676$ và \IDFone\ bằng $70.345$. Các kết quả này chứng minh rằng việc kết
+hợp bộ phát hiện YOLOv8n với BYTE là một hướng tiếp cận khả thi cho bài toán
+theo dõi phương tiện trong video giao thông.
+
+Các phân tích theo ngưỡng \HOTA\ cũng cho thấy hiệu năng tổng thể của hệ thống
+chịu ảnh hưởng lớn từ chất lượng phát hiện. Khi ngưỡng đánh giá trở nên nghiêm
+ngặt hơn, \DetA\ giảm nhanh hơn \AssA, cho thấy sai lệch về vị trí hoặc kích
+thước hộp giới hạn là nguyên nhân quan trọng làm giảm chất lượng theo dõi. Như
+vậy, đồ án không chỉ chứng minh được lợi ích của BYTE so với SORT trong việc
+duy trì định danh, mà còn chỉ ra rằng cải thiện bộ phát hiện là hướng quan
+trọng để nâng cao hiệu năng của toàn bộ hệ thống.
+
+Ưu điểm chính của phương pháp đề xuất là cấu trúc đơn giản, dễ triển khai và có
+khả năng cân bằng giữa tốc độ xử lý và độ chính xác. YOLOv8n có kích thước nhỏ,
+phù hợp với các hệ thống có tài nguyên tính toán hạn chế, trong khi BYTE giúp
+tận dụng tốt hơn các phát hiện ở nhiều mức độ tin cậy khác nhau. Bên cạnh đó,
+việc tách riêng bộ phát hiện và bộ theo dõi giúp hệ thống linh hoạt, có thể thay
+thế hoặc cải tiến từng thành phần mà không cần thay đổi toàn bộ kiến trúc.
+
+Tuy nhiên, phương pháp vẫn còn một số hạn chế. Hiệu năng phát hiện chưa đồng
+đều giữa các lớp do dữ liệu mất cân bằng, đặc biệt đối với các lớp ít mẫu như
+\textit{others}. Các đối tượng nhỏ, bị che khuất hoặc xuất hiện ở điều kiện
+quan sát khó vẫn có thể bị bỏ sót hoặc định vị chưa chính xác, từ đó ảnh hưởng
+đến kết quả theo dõi. Ngoài ra, hệ thống hiện chủ yếu được đánh giá trên bài
+toán phát hiện và theo dõi; phần đếm phương tiện vẫn phụ thuộc vào chất lượng
+quỹ đạo đầu ra và cần được đánh giá sâu hơn trong các kịch bản giao thông thực
+tế.
+
+Trong tương lai, có thể cải thiện hệ thống theo một số hướng. Thứ nhất, cần xử
+lý tốt hơn sự mất cân bằng dữ liệu bằng các chiến lược tăng cường dữ liệu, lấy
+mẫu lại hoặc điều chỉnh hàm mất mát cho các lớp ít mẫu. Thứ hai, có thể thử
+nghiệm các biến thể YOLO lớn hơn hoặc các kỹ thuật tối ưu suy luận để nâng cao
+độ chính xác trong khi vẫn đảm bảo tốc độ xử lý. Thứ ba, việc bổ sung các đặc
+trưng ngoại quan hoặc các thuật toán theo dõi mạnh hơn có thể giúp giảm nhầm
+lẫn định danh trong các tình huống che khuất. Cuối cùng, cần đánh giá trực tiếp
+độ chính xác của bài toán đếm phương tiện trên các vùng hoặc đường đếm cụ thể
+để hoàn thiện hơn hệ thống phục vụ giám sát giao thông tự động.
