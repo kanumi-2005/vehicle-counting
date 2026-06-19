@@ -21,16 +21,16 @@ class TrackingPipeline:
     def __init__(
         self,
         model_path,
-        confidence_threshold=0.2,
-        device="cpu",
-        verbose=False,
-        tracker_type="byte",
-        lost_track_buffer=75,
-        frame_rate=25,
-        track_activation_threshold=0.572,
-        minimum_consecutive_frames=2,
-        minimum_iou_threshold=0.1,
-        high_conf_detection_threshold=0.572,
+        confidence_threshold,
+        device,
+        verbose,
+        tracker_type,
+        lost_track_buffer,
+        frame_rate,
+        track_activation_threshold,
+        minimum_consecutive_frames,
+        minimum_iou_threshold,
+        high_conf_detection_threshold,
     ):
 
         self.verbose = verbose

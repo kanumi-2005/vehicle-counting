@@ -46,10 +46,23 @@
   "tracking": {
     "tracker_type": "byte",
     "lost_track_buffer": 75,
-    "track_activation_threshold": 0.572,
+    "track_activation_threshold": 0.6,
     "minimum_consecutive_frames": 2,
     "minimum_iou_threshold": 0.1,
-    "high_conf_detection_threshold": 0.572
+    "high_conf_detection_threshold": 0.6,
+    "byte": {
+      "lost_track_buffer": 75,
+      "track_activation_threshold": 0.6,
+      "minimum_consecutive_frames": 2,
+      "minimum_iou_threshold": 0.1,
+      "high_conf_detection_threshold": 0.6
+    },
+    "sort": {
+      "lost_track_buffer": 75,
+      "track_activation_threshold": 0.6,
+      "minimum_consecutive_frames": 2,
+      "minimum_iou_threshold": 0.1
+    }
   },
   "trackeval": {
     "metrics": [
