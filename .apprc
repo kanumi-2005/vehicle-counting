@@ -1,0 +1,10 @@
+{
+  "video": null,
+  "output": null,
+  "width": null,
+  "height": null,
+  "show_control_panel": true,
+  "verbose_tracking": false,
+  "verbose_detection": false,
+  "quiet_detection": false
+}
