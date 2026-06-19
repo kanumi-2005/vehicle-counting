@@ -1,0 +1,75 @@
+{
+  "paths": {
+    "raw_train_annotations_dir": "data/raw/DETRAC-Train-Annotations-XML",
+    "raw_test_annotations_dir": "data/raw/DETRAC-Test-Annotations-XML",
+    "raw_images_dir": "data/raw/DETRAC-Images",
+    "preprocessed_images_dir": "data/preprocessed",
+    "split_manifest_path": "data/preprocessed/splits.json",
+    "yolo_output_dir": "data/yolo",
+    "yolo_data_yaml_path": "data/yolo/data.yaml",
+    "trackeval_data_dir": "data/trackeval/data",
+    "tracker_output_dir": "data/trackeval/data/trackers",
+    "model_path": "weights/best.pt"
+  },
+  "dataset": {
+    "benchmark_name": "ua-detrac",
+    "tracker_name": null,
+    "frame_rate": 25,
+    "image_width": 960,
+    "image_height": 540,
+    "image_ext": ".jpg"
+  },
+  "preprocessing": {
+    "ignore_mask_mode": "black",
+    "gaussian_kernel_size": 51,
+    "gaussian_sigma": 15
+  },
+  "split": {
+    "train_ratio": 0.8,
+    "random_seed": 42
+  },
+  "yolo": {
+    "class_map": {
+      "car": 0,
+      "bus": 1,
+      "van": 2,
+      "others": 3
+    },
+    "default_class_name": "others"
+  },
+  "detection": {
+    "detector_name": "yolo",
+    "confidence_threshold": 0.2,
+    "device": "auto",
+    "verbose": false
+  },
+  "tracking": {
+    "tracker_type": "byte",
+    "lost_track_buffer": 75,
+    "track_activation_threshold": 0.6,
+    "minimum_consecutive_frames": 2,
+    "minimum_iou_threshold": 0.1,
+    "high_conf_detection_threshold": 0.6,
+    "byte": {
+      "lost_track_buffer": 75,
+      "track_activation_threshold": 0.6,
+      "minimum_consecutive_frames": 2,
+      "minimum_iou_threshold": 0.1,
+      "high_conf_detection_threshold": 0.6
+    },
+    "sort": {
+      "lost_track_buffer": 75,
+      "track_activation_threshold": 0.6,
+      "minimum_consecutive_frames": 2,
+      "minimum_iou_threshold": 0.1
+    }
+  },
+  "trackeval": {
+    "metrics": [
+      "HOTA",
+      "CLEAR",
+      "Identity"
+    ],
+    "print_config": false
+  }
+}
