@@ -96,13 +96,6 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-TrackEval is included under `third_party/TrackEval`. When running evaluation
-scripts, make sure it is importable:
-
-```bash
-export PYTHONPATH="$PWD/third_party/TrackEval:$PYTHONPATH"
-```
-
 ## Data and Configuration
 
 The main configuration file is:
