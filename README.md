@@ -88,6 +88,20 @@ vehicle-counting/
 
 ## Setup
 
+Clone the repository with submodules:
+
+```bash
+git clone --recurse-submodules \
+  https://github.com/kanumi-2005/vehicle-counting.git
+cd vehicle-counting
+```
+
+If the repository was cloned without submodules, initialize them manually:
+
+```bash
+git submodule update --init --recursive
+```
+
 Create and activate a virtual environment, then install dependencies:
 
 ```bash
